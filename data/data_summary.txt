@@ -1,0 +1,212 @@
+================================================================================
+RESUMEN ESTADÍSTICO - BREAST CANCER WISCONSIN (DIAGNOSTIC) DATASET
+================================================================================
+Fecha de análisis: 2025-10-24 00:47:19
+
+--------------------------------------------------------------------------------
+1. INFORMACIÓN GENERAL DEL DATASET
+--------------------------------------------------------------------------------
+Número total de registros: 569
+Número total de características: 30
+Dimensión del dataset: (569, 31)
+
+--------------------------------------------------------------------------------
+2. NOMBRES DE COLUMNAS
+--------------------------------------------------------------------------------
+   1. mean radius
+   2. mean texture
+   3. mean perimeter
+   4. mean area
+   5. mean smoothness
+   6. mean compactness
+   7. mean concavity
+   8. mean concave points
+   9. mean symmetry
+  10. mean fractal dimension
+  11. radius error
+  12. texture error
+  13. perimeter error
+  14. area error
+  15. smoothness error
+  16. compactness error
+  17. concavity error
+  18. concave points error
+  19. symmetry error
+  20. fractal dimension error
+  21. worst radius
+  22. worst texture
+  23. worst perimeter
+  24. worst area
+  25. worst smoothness
+  26. worst compactness
+  27. worst concavity
+  28. worst concave points
+  29. worst symmetry
+  30. worst fractal dimension
+  31. diagnosis (variable objetivo)
+
+--------------------------------------------------------------------------------
+3. TIPOS DE DATOS
+--------------------------------------------------------------------------------
+mean radius                float64
+mean texture               float64
+mean perimeter             float64
+mean area                  float64
+mean smoothness            float64
+mean compactness           float64
+mean concavity             float64
+mean concave points        float64
+mean symmetry              float64
+mean fractal dimension     float64
+radius error               float64
+texture error              float64
+perimeter error            float64
+area error                 float64
+smoothness error           float64
+compactness error          float64
+concavity error            float64
+concave points error       float64
+symmetry error             float64
+fractal dimension error    float64
+worst radius               float64
+worst texture              float64
+worst perimeter            float64
+worst area                 float64
+worst smoothness           float64
+worst compactness          float64
+worst concavity            float64
+worst concave points       float64
+worst symmetry             float64
+worst fractal dimension    float64
+diagnosis                   object
+dtype: object
+
+--------------------------------------------------------------------------------
+4. VALORES FALTANTES
+--------------------------------------------------------------------------------
+Total de valores faltantes: 0
+No se encontraron valores faltantes en el dataset
+
+--------------------------------------------------------------------------------
+5. DISTRIBUCIÓN DE CLASES (DIAGNÓSTICO)
+--------------------------------------------------------------------------------
+Benign (B):    357 muestras (62.74%)
+Malignant (M): 212 muestras (37.26%)
+Total:         569 muestras
+
+--------------------------------------------------------------------------------
+6. ESTADÍSTICAS DESCRIPTIVAS (CARACTERÍSTICAS NUMÉRICAS)
+--------------------------------------------------------------------------------
+       mean radius  mean texture  mean perimeter    mean area  ...  worst concavity  worst concave points  worst symmetry  worst fractal dimension
+count   569.000000    569.000000      569.000000   569.000000  ...       569.000000            569.000000      569.000000               569.000000
+mean     14.127292     19.289649       91.969033   654.889104  ...         0.272188              0.114606        0.290076                 0.083946
+std       3.524049      4.301036       24.298981   351.914129  ...         0.208624              0.065732        0.061867                 0.018061
+min       6.981000      9.710000       43.790000   143.500000  ...         0.000000              0.000000        0.156500                 0.055040
+25%      11.700000     16.170000       75.170000   420.300000  ...         0.114500              0.064930        0.250400                 0.071460
+50%      13.370000     18.840000       86.240000   551.100000  ...         0.226700              0.099930        0.282200                 0.080040
+75%      15.780000     21.800000      104.100000   782.700000  ...         0.382900              0.161400        0.317900                 0.092080
+max      28.110000     39.280000      188.500000  2501.000000  ...         1.252000              0.291000        0.663800                 0.207500
+
+[8 rows x 30 columns]
+
+--------------------------------------------------------------------------------
+7. RANGOS DE VALORES (MIN - MAX)
+--------------------------------------------------------------------------------
+  mean radius:
+    Min: 6.9810, Max: 28.1100
+  mean texture:
+    Min: 9.7100, Max: 39.2800
+  mean perimeter:
+    Min: 43.7900, Max: 188.5000
+  mean area:
+    Min: 143.5000, Max: 2501.0000
+  mean smoothness:
+    Min: 0.0526, Max: 0.1634
+  mean compactness:
+    Min: 0.0194, Max: 0.3454
+  mean concavity:
+    Min: 0.0000, Max: 0.4268
+  mean concave points:
+    Min: 0.0000, Max: 0.2012
+  mean symmetry:
+    Min: 0.1060, Max: 0.3040
+  mean fractal dimension:
+    Min: 0.0500, Max: 0.0974
+  radius error:
+    Min: 0.1115, Max: 2.8730
+  texture error:
+    Min: 0.3602, Max: 4.8850
+  perimeter error:
+    Min: 0.7570, Max: 21.9800
+  area error:
+    Min: 6.8020, Max: 542.2000
+  smoothness error:
+    Min: 0.0017, Max: 0.0311
+  compactness error:
+    Min: 0.0023, Max: 0.1354
+  concavity error:
+    Min: 0.0000, Max: 0.3960
+  concave points error:
+    Min: 0.0000, Max: 0.0528
+  symmetry error:
+    Min: 0.0079, Max: 0.0790
+  fractal dimension error:
+    Min: 0.0009, Max: 0.0298
+  worst radius:
+    Min: 7.9300, Max: 36.0400
+  worst texture:
+    Min: 12.0200, Max: 49.5400
+  worst perimeter:
+    Min: 50.4100, Max: 251.2000
+  worst area:
+    Min: 185.2000, Max: 4254.0000
+  worst smoothness:
+    Min: 0.0712, Max: 0.2226
+  worst compactness:
+    Min: 0.0273, Max: 1.0580
+  worst concavity:
+    Min: 0.0000, Max: 1.2520
+  worst concave points:
+    Min: 0.0000, Max: 0.2910
+  worst symmetry:
+    Min: 0.1565, Max: 0.6638
+  worst fractal dimension:
+    Min: 0.0550, Max: 0.2075
+
+--------------------------------------------------------------------------------
+8. OBSERVACIONES Y NOTAS
+--------------------------------------------------------------------------------
+  - El dataset contiene 30 características numéricas calculadas a partir
+    de imágenes digitalizadas de aspiraciones con aguja fina (FNA) de
+    masas mamarias.
+
+  - Las características describen propiedades de los núcleos celulares
+    presentes en las imágenes.
+
+  - Para cada característica se calculan tres valores:
+    * mean: media de los valores
+    * error: error estándar
+    * worst: media de los tres valores más grandes
+
+  - Las 10 características base son:
+    1. radius (radio)
+    2. texture (textura)
+    3. perimeter (perímetro)
+    4. area (área)
+    5. smoothness (suavidad)
+    6. compactness (compacidad)
+    7. concavity (concavidad)
+    8. concave points (puntos cóncavos)
+    9. symmetry (simetría)
+    10. fractal dimension (dimensión fractal)
+
+  - El dataset está balanceado con aproximadamente 63% de casos benignos
+    y 37% de casos malignos.
+
+  - No se detectaron valores faltantes, lo que indica que el dataset
+    está completo y listo para su uso.
+
+  - Las características tienen diferentes escalas, por lo que será
+    necesario aplicar normalización/estandarización antes del modelado.
+
+================================================================================
