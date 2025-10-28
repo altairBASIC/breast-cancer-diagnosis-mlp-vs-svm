@@ -2,7 +2,7 @@
 
 ## Descripcion del Proyecto
 
-Este proyecto implementa y compara dos modelos de Machine Learning (Multi-Layer Perceptron y Support Vector Machine) para el diagnostico de cancer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning.
+Este proyecto implementa y compara dos modelos de Machine Learning (Multi-Layer Perceptron y Support Vector Machine) para el diagnostico de cancer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning. Su desarrollo es netamente con objetivos academicos.
 
 ## Objetivo
 
