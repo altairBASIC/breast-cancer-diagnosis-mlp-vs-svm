@@ -46,7 +46,6 @@ desktop.ini
 
 # Logs
 *.log
-setup_log.txt
 
 # MongoDB data (not the CSV, just local MongoDB files)
 data/db/
@@ -60,3 +59,8 @@ data/db/
 *.temp
 verify_data.py
 test_mongodb_connection.py
+MONGODB_COMPASS_GUIDE.md
+CHECKLIST.md
+ENTREGABLES_SEMANA_1.md
+GUIA_INSTALACION_MONGODB.md
+verificar_mongodb.ps1
