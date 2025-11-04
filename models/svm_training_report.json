@@ -1,0 +1,64 @@
+{
+    "model_type": "SVC (Support Vector Machine)",
+    "timestamp": "2025-11-03 19:48:46",
+    "hyperparameters": {
+        "svm__C": 10,
+        "svm__gamma": 0.01,
+        "svm__kernel": "rbf"
+    },
+    "training_info": {
+        "cv_folds": 5,
+        "best_f1_cv": 0.9697549589713768,
+        "training_time_seconds": 2.5
+    },
+    "performance_metrics": {
+        "train": {
+            "accuracy": 0.9868131868131869,
+            "precision": 1.0,
+            "recall": 0.9647058823529412,
+            "specificity": 1.0,
+            "f1_score": 0.9820359281437125,
+            "balanced_accuracy": 0.9823529411764707,
+            "auc": 0.9978328173374612,
+            "avg_precision": 0.9974331258073681,
+            "mcc": 0.9720159666475798,
+            "cohens_kappa": 0.9716245712503898
+        },
+        "test": {
+            "accuracy": 0.9824561403508771,
+            "precision": 1.0,
+            "recall": 0.9523809523809523,
+            "specificity": 1.0,
+            "f1_score": 0.975609756097561,
+            "balanced_accuracy": 0.9761904761904762,
+            "auc": 0.996031746031746,
+            "avg_precision": 0.9947089947089948,
+            "mcc": 0.962621902223779,
+            "cohens_kappa": 0.9619238476953907
+        }
+    },
+    "confusion_matrix": {
+        "train": {
+            "true_negatives": 285,
+            "false_positives": 0,
+            "false_negatives": 6,
+            "true_positives": 164
+        },
+        "test": {
+            "true_negatives": 72,
+            "false_positives": 0,
+            "false_negatives": 2,
+            "true_positives": 40
+        }
+    },
+    "dataset_shapes": {
+        "X_train": [
+            455,
+            30
+        ],
+        "X_test": [
+            114,
+            30
+        ]
+    }
+}
