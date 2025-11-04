@@ -1,6 +1,6 @@
 {
     "model_type": "SVC (Support Vector Machine)",
-    "timestamp": "2025-11-03 19:48:46",
+    "timestamp": "2025-11-03 21:24:46",
     "hyperparameters": {
         "svm__C": 10,
         "svm__gamma": 0.01,
@@ -9,7 +9,7 @@
     "training_info": {
         "cv_folds": 5,
         "best_f1_cv": 0.9697549589713768,
-        "training_time_seconds": 2.5
+        "training_time_seconds": 0.33
     },
     "performance_metrics": {
         "train": {

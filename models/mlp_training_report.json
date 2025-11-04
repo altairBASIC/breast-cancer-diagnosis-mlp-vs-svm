@@ -1,6 +1,6 @@
 {
     "model_type": "MLPClassifier",
-    "timestamp": "2025-10-29 21:40:45",
+    "timestamp": "2025-11-03 20:32:49",
     "hyperparameters": {
         "hidden_layer_sizes": [
             100,
@@ -16,7 +16,7 @@
     "training": {
         "n_iterations": 27,
         "final_loss": 0.06710604548144525,
-        "training_time_seconds": 0.08499836921691895
+        "training_time_seconds": 0.08843183517456055
     },
     "performance_metrics": {
         "train": {
