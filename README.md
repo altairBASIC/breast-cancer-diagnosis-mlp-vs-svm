@@ -2,7 +2,10 @@
 
 ## Descripcion del Proyecto
 
-Este proyecto implementa y compara dos modelos de Machine Learning (Multi-Layer Perceptron y Support Vector Machine) para el diagnostico de cancer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning. Su desarrollo es netamente con objetivos academicos.
+Este proyecto implementa y compara dos modelos de Machine Learning —Multi-Layer Perceptron (MLP) y Support Vector Machine (SVM)— para el diagnóstico de cáncer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning.
+El trabajo incluye un pipeline completo de ciencia de datos, abarcando la adquisición del dataset, el preprocesamiento, el análisis exploratorio de datos, el entrenamiento y evaluación de modelos, y la construcción de una aplicación web interactiva mediante Streamlit.
+Los modelos y los registros procesados se almacenan en MongoDB, permitiendo su consulta desde el frontend.
+El proyecto tiene fines estrictamente académicos y busca reforzar competencias en análisis de datos, modelamiento y despliegue de aplicaciones de Machine Learning.
 
 ## Objetivo
 
@@ -212,13 +215,100 @@ Este proyecto es parte de un trabajo academico. Las sugerencias y mejoras son bi
 Este proyecto se proporciona con fines educativos.
 
 ## Autores
+Ignacio Ramírez
+Cristián Vergara
+Antonia Montecinos
 
 ## Referencias
+Dataset utilizado:
+Dua, D. & Graff, C. (2019).
+UCI Machine Learning Repository: Breast Cancer Wisconsin (Diagnostic) Data Set.
+University of California, Irvine.
+https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)
 
-## Contacto
+Artículos científicos sobre el dataset
 
-Para preguntas o comentarios sobre este proyecto, por favor abra un issue en el repositorio de GitHub.
+Wolberg, W. H., & Mangasarian, O. L. (1990).
+Multisurface method of pattern separation for medical diagnosis applied to breast cytology.
+Proceedings of the National Academy of Sciences.
+https://doi.org/10.1073/pnas.87.23.9135
+
+Street, W. N., Mangasarian, O. L., & Wolberg, W. H. (1993).
+Nuclear feature extraction for breast tumor diagnosis.
+IS&T/SPIE International Symposium.
+https://doi.org/10.1117/12.148698
+
+Referencias de los algoritmos usados
+Support Vector Machine
+
+Cortes, C., & Vapnik, V. (1995).
+Support-vector networks.
+Machine Learning, 20, 273–297.
+https://doi.org/10.1007/BF00994018
+
+Multi-Layer Perceptron
+
+Rosenblatt, F. (1958).
+The Perceptron: A probabilistic model for information storage and organization in the brain.
+Psychological Review, 65(6), 386–408.
+https://doi.org/10.1037/h0042519
+
+Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986).
+Learning representations by back-propagating errors.
+Nature 323, 533–536.
+https://doi.org/10.1038/323533a0
+
+Documentación oficial de las herramientas usadas
+Python:
+
+Python Software Foundation.
+Python Language Reference, v3.x.
+https://www.python.org/
+
+Pandas:
+
+The pandas development team (2023).
+pandas documentation.
+https://pandas.pydata.org/
+
+NumPy:
+
+Harris et al. (2020).
+The NumPy Array: A Structure for Efficient Numerical Computation.
+Nature.
+https://numpy.org/
+
+scikit-learn:
+
+Pedregosa et al. (2011).
+Scikit-learn: Machine Learning in Python.
+Journal of Machine Learning Research.
+https://scikit-learn.org/stable/
+
+MongoDB:
+
+MongoDB Inc.
+MongoDB Documentation.
+https://www.mongodb.com/docs/
+
+PyMongo:
+
+MongoDB Inc.
+PyMongo Documentation.
+https://pymongo.readthedocs.io/
+
+Streamlit:
+
+Streamlit Inc.
+Streamlit Documentation.
+https://docs.streamlit.io/
+
+joblib:
+
+joblib developers.
+joblib Documentation.
+https://joblib.readthedocs.io/
 
 ---
 
-**Nota:** Este proyecto fue desarrollado como parte de un curso de Machine Learning y tiene fines exclusivamente educativos.
+**Nota:** Este proyecto fue desarrollado como parte de un curso de Machine Learning para la Universidad Tecnológica Metropolitana y tiene fines exclusivamente educativos.
