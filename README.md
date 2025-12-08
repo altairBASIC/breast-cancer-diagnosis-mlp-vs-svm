@@ -2,7 +2,7 @@
 
 ## Descripcion del Proyecto
 
-Este proyecto implementa y compara dos modelos de Machine Learning —Multi-Layer Perceptron (MLP) y Support Vector Machine (SVM)— para el diagnóstico de cáncer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning.
+Este proyecto implementa y compara dos modelos de Machine Learning (Multi-Layer Perceptron (MLP) y Support Vector Machine (SVM)) para el diagnóstico de cáncer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning.
 El trabajo incluye un pipeline completo de ciencia de datos, abarcando la adquisición del dataset, el preprocesamiento, el análisis exploratorio de datos, el entrenamiento y evaluación de modelos, y la construcción de una aplicación web interactiva mediante Streamlit.
 Los modelos y los registros procesados se almacenan en MongoDB, permitiendo su consulta desde el frontend.
 El proyecto tiene fines estrictamente académicos y busca reforzar competencias en análisis de datos, modelamiento y despliegue de aplicaciones de Machine Learning.
