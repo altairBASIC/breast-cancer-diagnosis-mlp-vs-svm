@@ -31,6 +31,7 @@ def load_model():
 
 def generar_valores_aleatorios():
     for feature in ALL_FEATURES:
+        # Usamos prefijo mlp_ para evitar choques con SVM
         st.session_state[f"mlp_{feature}"] = np.round(np.random.uniform(-3, 3), 2)
 
 def render_input_group(features_list):
@@ -38,15 +39,20 @@ def render_input_group(features_list):
     for i, feature in enumerate(features_list):
         col_index = i % 5
         key = f"mlp_{feature}"
-        if key not in st.session_state: st.session_state[key] = 0.00
         
+        # Inicializar si no existe en sesión
+        if key not in st.session_state:
+            st.session_state[key] = 0.00
+
         with cols[col_index]:
             st.number_input(
-                label=feature.replace("mean ", "").replace("worst ", "").replace(" error", "").capitalize(),
-                value=float(st.session_state[key]), 
-                step=0.1, 
-                format="%.2f", 
-                key=key
+                label=feature.replace("mean ", "")
+                             .replace("worst ", "")
+                             .replace(" error", "")
+                             .capitalize(),
+                step=0.1,
+                format="%.2f",
+                key=key,          #
             )
 
 def mostrar():
@@ -62,7 +68,7 @@ def mostrar():
     c_title, _, c_rand = st.columns([3, 4, 1.5], gap="small")
     with c_rand:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🎲 Cargar Ejemplo", key="rand_mlp", use_container_width=True):
+        if st.button("🎲 Cargar Ejemplo", key="btn_rnd_mlp", use_container_width=True):
             generar_valores_aleatorios()
 
     # --- INPUTS ---
@@ -81,7 +87,7 @@ def mostrar():
 
     # --- RESULTADO ---
     if submitted and model:
-        # Recolectamos los valores de los inputs
+        # Recolectar usando las claves correctas (mlp_)
         input_values = [st.session_state[f"mlp_{f}"] for f in ALL_FEATURES]
         
         try:
@@ -92,24 +98,19 @@ def mostrar():
             if hasattr(model, "predict_proba"):
                 proba = model.predict_proba(features_array).max()
 
-            # --- AQUÍ ESTÁ EL CAMBIO ---
             res_txt = "MALIGNO" if prediction == 1 else "BENIGNO"
-            conf_str = f"{proba:.2%}"
-            
-            # 1. Creamos el registro básico
+            conf_str = f"{proba:.2%}" # Formato string directo
+
             nuevo_registro = {
                 "Fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
                 "Diagnóstico": res_txt, 
                 "Confianza": conf_str
             }
-            
-            # 2. Agregamos TODOS los datos de entrada al registro
+            # Guardar inputs
             for feature, val in zip(ALL_FEATURES, input_values):
                 nuevo_registro[feature] = val
             
-            # 3. Guardamos en el historial
             st.session_state['historial_mlp'].append(nuevo_registro)
-            # ---------------------------
 
             st.divider()
             
@@ -149,12 +150,22 @@ def mostrar():
                 st.rerun()
         
         df = pd.DataFrame(st.session_state['historial_mlp'])
-        st.dataframe(df, use_container_width=True, height=200)
         
-        col_d1, col_d2 = st.columns([4, 1])
-        with col_d2:
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("📥 Descargar CSV", csv, f"mlp_diag_{datetime.now().strftime('%H%M')}.csv", "text/csv", use_container_width=True)
+        # --- FILTRO DE SEGURIDAD (SOLUCIÓN A LOS "None") ---
+        # Si la columna diagnóstico existe, elimina filas donde sea nula o vacía
+        if not df.empty and "Diagnóstico" in df.columns:
+            df = df.dropna(subset=["Diagnóstico"])
+            # Filtro extra: Asegurarse que no sea el string "None" literal
+            df = df[df["Diagnóstico"].astype(str) != "None"]
+        # ---------------------------------------------------
+
+        if not df.empty:
+            st.dataframe(df, use_container_width=True, height=200)
+            
+            col_d1, col_d2 = st.columns([4, 1])
+            with col_d2:
+                csv = df.to_csv(index=False).encode('utf-8')
+                st.download_button("📥 Descargar CSV", csv, f"mlp_diag_{datetime.now().strftime('%H%M')}.csv", "text/csv", use_container_width=True)
 
 if __name__ == "__main__":
     mostrar()

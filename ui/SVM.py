@@ -3,13 +3,12 @@ import pandas as pd
 import json
 import joblib
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.graph_objects as go
+import plotly.express as px
 import os
 import time
 
 # --- CONFIGURACIÓN Y CONSTANTES ---
-# Mapeo para leer métricas sin importar si vienen como 'acc' o 'accuracy'
 KEY_MAPPING = {
     "acc": "accuracy", "prec": "precision", "rec": "recall",
     "f1": "f1_score", "roc": "auc", "bal": "balanced_accuracy",
@@ -30,17 +29,13 @@ METRIC_DEFINITIONS = {
 }
 
 def get_metric_value(metrics_dict, long_name):
-    """Busca el valor de una métrica de forma robusta."""
     if not metrics_dict: return 0.0
-    # 1. Intento directo
     if long_name in metrics_dict: return metrics_dict[long_name]
-    # 2. Intento por alias corto
     short_name = next((k for k, v in KEY_MAPPING.items() if v == long_name), None)
     if short_name and short_name in metrics_dict: return metrics_dict[short_name]
     return 0.0
 
 def load_data():
-    """Carga reporte y modelo."""
     json_path = 'models/svm_training_report.json'
     model_path = 'models/svm_model.pkl'
     
@@ -50,26 +45,205 @@ def load_data():
     if os.path.exists(json_path):
         with open(json_path, 'r') as f:
             report = json.load(f)
-    else:
-        st.error(f"⚠️ No se encontró: {json_path}")
     
     if os.path.exists(model_path):
         model = joblib.load(model_path)
     
     return report, model
 
-# --- SECCIÓN 1: TABLA DE MÉTRICAS ---
-def mostrar_estadisticas(report):
-    if not report: return
-    metrics_raw = report.get('performance_metrics', {}).get('test', {})
+# --- GRÁFICOS CON PLOTLY ---
+
+def plot_confusion_matrix_plotly(cm_data, title):
+    """Matriz de confusión interactiva con Plotly."""
+    if not cm_data: return None
     
-    # Normalizar nombres para la tabla
+    # Preparar datos
+    z = [[cm_data.get('true_negatives', 0), cm_data.get('false_positives', 0)],
+         [cm_data.get('false_negatives', 0), cm_data.get('true_positives', 0)]]
+    
+    x = ['Benigno', 'Maligno']
+    y = ['Benigno', 'Maligno']
+    
+    # Texto para mostrar dentro de las celdas
+    z_text = [[str(y) for y in x] for x in z]
+
+    # Crear Heatmap
+    fig = go.Figure(data=go.Heatmap(
+        z=z, x=x, y=y,
+        text=z_text,
+        texttemplate="%{text}",
+        textfont={"size": 20},
+        colorscale='Blues',
+        showscale=False
+    ))
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5, xanchor='center'),
+        xaxis_title="Predicción",
+        yaxis_title="Realidad",
+        width=350, height=350,
+        margin=dict(l=40, r=40, t=40, b=40)
+    )
+    # Invertir eje Y para que coincida con la convención estándar (TN arriba izq)
+    fig['layout']['yaxis']['autorange'] = "reversed"
+    
+    return fig
+
+def plot_metrics_comparison_plotly(report):
+    """Gráfico de barras comparativo Train vs Test."""
+    target_metrics = ['accuracy', 'precision', 'recall', 'f1_score']
+    perf = report.get('performance_metrics', {})
+    train_data = perf.get('train', {})
+    test_data = perf.get('test', {})
+
+    y_train = [get_metric_value(train_data, m) for m in target_metrics]
+    y_test  = [get_metric_value(test_data, m) for m in target_metrics]
+    x_labels = [m.replace('_', ' ').capitalize() for m in target_metrics]
+
+    fig = go.Figure()
+    
+    # Barra Train
+    fig.add_trace(go.Bar(
+        x=x_labels, y=y_train,
+        name='Entrenamiento',
+        marker_color='#1f77b4',
+        text=[f"{v:.2f}" for v in y_train],
+        textposition='auto'
+    ))
+    
+    # Barra Test
+    fig.add_trace(go.Bar(
+        x=x_labels, y=y_test,
+        name='Prueba',
+        marker_color='#ff7f0e',
+        text=[f"{v:.2f}" for v in y_test],
+        textposition='auto'
+    ))
+
+    fig.update_layout(
+        title="Comparación de Rendimiento",
+        barmode='group',
+        yaxis=dict(range=[0, 1.1]),
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    return fig
+
+def plot_class_distribution_plotly(report):
+    """Gráfico de Donut interactivo."""
+    cm = report.get('confusion_matrix', {}).get('test', {})
+    if not cm: return None
+    
+    benignos = cm.get('true_negatives', 0) + cm.get('false_positives', 0)
+    malignos = cm.get('true_positives', 0) + cm.get('false_negatives', 0)
+    
+    labels = ['Benignos', 'Malignos']
+    values = [benignos, malignos]
+    colors = ['#66b3ff', '#ff9999']
+
+    fig = go.Figure(data=[go.Pie(
+        labels=labels, values=values, hole=.5,
+        marker=dict(colors=colors),
+        textinfo='label+percent',
+        insidetextorientation='radial'
+    )])
+
+    fig.update_layout(
+        title="Distribución Real (Test)",
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20),
+        showlegend=False
+    )
+    return fig
+
+def plot_learning_curve_plotly(train_sizes, train_scores, cv_scores, current_step=None):
+    """Crea la figura de la curva de aprendizaje."""
+    if current_step is None:
+        current_step = len(train_sizes)
+
+    # Recortar datos según el paso de la animación
+    ts = train_sizes[:current_step]
+    tr_sc = train_scores[:current_step]
+    cv_sc = cv_scores[:current_step]
+
+    fig = go.Figure()
+
+    # Línea Entrenamiento
+    fig.add_trace(go.Scatter(
+        x=ts, y=tr_sc,
+        mode='lines+markers',
+        name='Entrenamiento',
+        line=dict(color='#d62728', width=3),
+        marker=dict(size=8)
+    ))
+
+    # Línea Validación
+    fig.add_trace(go.Scatter(
+        x=ts, y=cv_sc,
+        mode='lines+markers',
+        name='Validación (Prueba)',
+        line=dict(color='#2ca02c', width=3),
+        marker=dict(size=8)
+    ))
+
+    # Configuración de ejes fija para que no "baile"
+    min_y = min(min(train_scores), min(cv_scores)) * 0.98
+    
+    fig.update_layout(
+        title="Evolución del Aprendizaje",
+        xaxis_title="Ejemplos Procesados",
+        yaxis_title="Score (Precisión)",
+        yaxis=dict(range=[min_y, 1.005]),
+        xaxis=dict(range=[min(train_sizes)*0.9, max(train_sizes)*1.05]),
+        height=450,
+        margin=dict(l=20, r=20, t=40, b=20),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
+    )
+    return fig
+
+# --- LÓGICA DE SIMULACIÓN ---
+def run_simulation(report, placeholder_bar, placeholder_plot):
+    """Ejecuta la animación y actualiza el estado al finalizar."""
+    lc = report.get('learning_curve', {})
+    if not lc: return
+
+    train_sizes = lc.get('train_sizes')
+    train_scores = lc.get('train_scores')
+    cv_scores = lc.get('cv_scores')
+    if not cv_scores and 'test_scores' in lc: cv_scores = lc['test_scores']
+    
+    if not train_sizes: return
+
+    # Animación
+    for i in range(1, len(train_sizes) + 1):
+        # Actualizar barra
+        progress = i / len(train_sizes)
+        placeholder_bar.progress(progress, text=f"Entrenando modelo... ({int(progress*100)}%)")
+        
+        # Actualizar gráfico
+        fig = plot_learning_curve_plotly(train_sizes, train_scores, cv_scores, current_step=i)
+        placeholder_plot.plotly_chart(fig, use_container_width=True)
+        
+        time.sleep(0.15) # Velocidad de animación
+
+    # Finalizar
+    placeholder_bar.empty() # Quitar barra
+    st.toast("¡Entrenamiento finalizado con éxito!", icon="🚀")
+    
+    # Guardar en sesión que ya se entrenó
+    st.session_state['svm_is_trained'] = True
+
+# --- COMPONENTES VISUALES ---
+
+def mostrar_estadisticas(report):
+    metrics_raw = report.get('performance_metrics', {}).get('test', {})
     metrics_normalized = {}
     for k, v in metrics_raw.items():
         new_key = KEY_MAPPING.get(k, k) 
         metrics_normalized[new_key] = v
 
-    with st.expander("📊 Métricas del Modelo (Clic para desplegar)", expanded=False):
+    with st.expander("📊 Métricas Detalladas (Clic para desplegar)", expanded=False):
         _, col_centro, _ = st.columns([1, 2, 1])
         with col_centro:
             with st.container(border=True):
@@ -85,26 +259,6 @@ def mostrar_estadisticas(report):
                     else:
                         c2.markdown(f"`{value}`")
 
-# --- SECCIÓN 2: GRÁFICOS ---
-def plot_confusion_matrix(cm_data, title):
-    if not cm_data: return None
-    try:
-        cm_array = np.array([
-            [cm_data.get('true_negatives',0), cm_data.get('false_positives',0)],
-            [cm_data.get('false_negatives',0), cm_data.get('true_positives',0)]
-        ])
-        fig, ax = plt.subplots(figsize=(3.5, 2.5))
-        sns.heatmap(cm_array, annot=True, fmt='d', cmap='Blues', cbar=False, ax=ax,
-                    annot_kws={"size": 10},
-                    xticklabels=['Benigno', 'Maligno'], yticklabels=['Benigno', 'Maligno'])
-        
-        ax.set_ylabel('Realidad', fontsize=8)
-        ax.set_xlabel('Predicción', fontsize=8)
-        ax.set_title(title, fontsize=10, pad=8)
-        plt.tight_layout()
-        return fig
-    except: return None
-
 def generar_explicacion_matriz(cm, tipo=""):
     if not cm: return ""
     tn = cm.get('true_negatives', 0)
@@ -113,180 +267,103 @@ def generar_explicacion_matriz(cm, tipo=""):
     tp = cm.get('true_positives', 0)
     total = tn + fp + fn + tp
     return f"""
-    **Análisis {tipo}:** ({total} casos)
+    **Análisis {tipo}:** (Total: {total})
     * ✅ **Aciertos: {tn + tp}**
     * ❌ **Errores: {fn + fp}** (FN: {fn}, FP: {fp})
     """
 
-def plot_metrics_comparison(report):
-    target_metrics = ['accuracy', 'precision', 'recall', 'f1_score']
-    perf = report.get('performance_metrics', {})
-    train_data = perf.get('train', {})
-    test_data = perf.get('test', {})
-
-    y_train = [get_metric_value(train_data, m) for m in target_metrics]
-    y_test  = [get_metric_value(test_data, m) for m in target_metrics]
+def mostrar_resultados_post_entrenamiento(report):
+    """Muestra todo el contenido analítico después de la simulación."""
     
-    x = np.arange(len(target_metrics))
-    width = 0.35
-    
-    fig, ax = plt.subplots(figsize=(5, 3))
-    ax.bar(x - width/2, y_train, width, label='Train', color='#1f77b4')
-    ax.bar(x + width/2, y_test, width, label='Test', color='#ff7f0e')
-    
-    ax.set_title('Comparación Train vs Test', fontsize=10)
-    ax.set_xticks(x)
-    ax.set_xticklabels([m.capitalize() for m in target_metrics], fontsize=8)
-    ax.set_ylim(0, 1.15)
-    ax.legend(loc='lower right', fontsize=7)
-    ax.bar_label(plt.gca().containers[0], padding=3, fmt='%.2f', fontsize=7)
-    ax.bar_label(plt.gca().containers[1], padding=3, fmt='%.2f', fontsize=7)
-    plt.tight_layout()
-    return fig
-
-def plot_class_distribution(report):
-    cm = report.get('confusion_matrix', {}).get('test', {})
-    if not cm: return None
-    benignos = cm.get('true_negatives', 0) + cm.get('false_positives', 0)
-    malignos = cm.get('true_positives', 0) + cm.get('false_negatives', 0)
-    
-    fig, ax = plt.subplots(figsize=(3, 3))
-    ax.pie([benignos, malignos], labels=['Benig', 'Malig'], 
-           colors=['#66b3ff','#ff9999'], autopct='%1.0f%%', startangle=90, 
-           textprops={'fontsize': 8})
-    ax.set_title('Distribución (Test)', fontsize=9)
-    plt.tight_layout()
-    return fig
-
-# --- LÓGICA DE ANIMACIÓN ---
-def animate_learning_curve(report, placeholder):
-    """Anima la curva sincronizada con una barra de progreso."""
+    # 1. Curva de Aprendizaje (Estática Final)
     lc = report.get('learning_curve', {})
-    if not lc: return
-    
-    train_sizes = lc.get('train_sizes')
-    train_scores = lc.get('train_scores')
-    cv_scores = lc.get('cv_scores')
-    if not cv_scores and 'test_scores' in lc: cv_scores = lc['test_scores']
-    
-    if not train_sizes: return
+    if lc:
+        st.markdown("### 1. Curva de Aprendizaje")
+        fig_lc = plot_learning_curve_plotly(
+            lc.get('train_sizes'), 
+            lc.get('train_scores'), 
+            lc.get('cv_scores') if 'cv_scores' in lc else lc.get('test_scores')
+        )
+        st.plotly_chart(fig_lc, use_container_width=True)
 
-    # Crear la barra de progreso encima del gráfico
-    progress_bar = st.progress(0, text="Iniciando entrenamiento...")
+    st.divider()
 
-    # Iterar y dibujar progresivamente
-    for i in range(1, len(train_sizes) + 1):
-        # Actualizar barra
-        progress_pct = i / len(train_sizes)
-        progress_bar.progress(progress_pct, text=f"Entrenando modelo... ({int(progress_pct*100)}%)")
-
-        fig, ax = plt.subplots(figsize=(6, 3))
-        
-        # Dibujar hasta el punto actual
-        ax.plot(train_sizes[:i], train_scores[:i], 'o-', color="#d62728", label="Entrenamiento", markersize=5, linewidth=2)
-        ax.plot(train_sizes[:i], cv_scores[:i], 'o-', color="#2ca02c", label="Prueba (Validación)", markersize=5, linewidth=2)
-        
-        # Fijar ejes para evitar saltos
-        ax.set_xlim(min(train_sizes)*0.9, max(train_sizes)*1.05)
-        min_y = min(min(train_scores), min(cv_scores))
-        ax.set_ylim(min_y*0.98, 1.005)
-        
-        ax.set_title("Evolución del Aprendizaje", fontsize=10)
-        ax.set_xlabel("Ejemplos Procesados", fontsize=9)
-        ax.set_ylabel("Precisión (Score)", fontsize=9)
-        ax.legend(loc="lower right", fontsize=8)
-        ax.grid(True, linestyle='--', alpha=0.5)
-        plt.tight_layout()
-        
-        # Actualizar gráfico
-        placeholder.pyplot(fig)
-        
-        # Velocidad de animación
-        time.sleep(0.15) 
-        plt.close(fig)
-
-    # Al terminar, limpiamos la barra y dejamos el gráfico final
-    progress_bar.empty() # Borra la barra
-    
-    # Mostrar gráfico final estático
-    fig_final = plot_learning_curve_static(report)
-    placeholder.pyplot(fig_final)
-    
-    # Mensaje de éxito temporal
-    st.toast("¡Entrenamiento completado exitosamente!", icon="✅")
-def plot_learning_curve_static(report):
-    lc = report.get('learning_curve', {})
-    if not lc: return None
-    train_sizes = lc.get('train_sizes')
-    train_scores = lc.get('train_scores')
-    cv_scores = lc.get('cv_scores')
-    if not cv_scores and 'test_scores' in lc: cv_scores = lc['test_scores']
-    fig, ax = plt.subplots(figsize=(6, 3))
-    ax.plot(train_sizes, train_scores, 'o-', color="#d62728", label="Entrenamiento", markersize=5, linewidth=2)
-    ax.plot(train_sizes, cv_scores, 'o-', color="#2ca02c", label="Prueba (Validación)", markersize=5, linewidth=2)
-
-    ax.set_title("Curva de Aprendizaje Final (SVM)", fontsize=10)
-    ax.set_xlabel("Ejemplos", fontsize=9)
-    ax.set_ylabel("Score", fontsize=9)
-    ax.legend(loc="lower right", fontsize=8)
-    ax.grid(True, linestyle='--', alpha=0.5)
-    plt.tight_layout()
-    return fig
-
-# --- FUNCIÓN PRINCIPAL DE VISUALIZACIÓN ---
-def mostrar_graficos(report):
-    if not report: return
+    # 2. Matrices de Confusión
+    st.markdown("### 2. Matrices de Confusión")
     cm = report.get('confusion_matrix', {})
     
-    with st.expander("📈 Visualización de Resultados", expanded=True):
-        st.markdown("##### 1. Matrices de Confusión")
-        # ... (código de matrices igual) ...
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            fig = plot_confusion_matrix(cm.get('train'), "Matriz Entrenamiento")
-            if fig: st.pyplot(fig, use_container_width=True)
-            st.info(generar_explicacion_matriz(cm.get('train'), "Entrenamiento"))
-        with col2:
-            fig = plot_confusion_matrix(cm.get('test'), "Matriz Prueba")
-            if fig: st.pyplot(fig, use_container_width=True)
-            st.success(generar_explicacion_matriz(cm.get('test'), "Prueba"))
+    col1, col2 = st.columns(2)
+    with col1:
+        fig_train = plot_confusion_matrix_plotly(cm.get('train'), "Matriz Entrenamiento")
+        if fig_train: st.plotly_chart(fig_train, use_container_width=True)
+        st.info(generar_explicacion_matriz(cm.get('train'), "Entrenamiento"))
 
-        st.divider()
-        st.markdown("##### 2. Rendimiento Global")
-        # ... (código de rendimiento igual) ...
-        c5, c6 = st.columns([2, 1])
-        with c5:
-            fig = plot_metrics_comparison(report)
-            if fig: st.pyplot(fig, use_container_width=True)
-        with c6:
-            fig = plot_class_distribution(report)
-            if fig: st.pyplot(fig, use_container_width=True)
+    with col2:
+        fig_test = plot_confusion_matrix_plotly(cm.get('test'), "Matriz Prueba")
+        if fig_test: st.plotly_chart(fig_test, use_container_width=True)
+        st.success(generar_explicacion_matriz(cm.get('test'), "Prueba"))
+    
+    st.divider()
 
-        if 'learning_curve' in report:
-            st.divider()
-            st.markdown("##### 3. Curva de Aprendizaje")
-            
-            c_btn, c_plot, _ = st.columns([1, 4, 1])
-            
-            with c_btn:
-                st.markdown("<br><br><br>", unsafe_allow_html=True)
-                run_anim = st.button("▶️ Entrenar Modelo", help="Visualizar proceso")
-            
-            with c_plot:
-                plot_area = st.empty()
-                
-                if run_anim:
-                    # La función animate ahora se encarga de la barra de progreso
-                    animate_learning_curve(report, plot_area)
-                else:
-                    # Mostrar estado inicial vacío o mensaje
-                    plot_area.info("Presiona 'Entrenar Modelo' para iniciar la simulación.")
+    # 3. Rendimiento Global
+    st.markdown("### 3. Rendimiento Global")
+    c3, c4 = st.columns([2, 1])
+    with c3:
+        fig_bar = plot_metrics_comparison_plotly(report)
+        if fig_bar: st.plotly_chart(fig_bar, use_container_width=True)
+    with c4:
+        fig_pie = plot_class_distribution_plotly(report)
+        if fig_pie: st.plotly_chart(fig_pie, use_container_width=True)
+    
+    # 4. Tabla de Métricas
+    st.divider()
+    mostrar_estadisticas(report)
+
 def mostrar():
     st.title("Support Vector Machine (SVM)")
-    st.markdown("Análisis de rendimiento: Vectores de Soporte.")
+    st.markdown("Plataforma de entrenamiento y análisis de vectores de soporte.")
+    
     report, model = load_data()
-    mostrar_estadisticas(report)
-    mostrar_graficos(report)
+    
+    if not report:
+        return
+
+    # Inicializar estado si no existe
+    if 'svm_is_trained' not in st.session_state:
+        st.session_state['svm_is_trained'] = False
+
+    # --- SECCIÓN SUPERIOR: ENTRENAMIENTO ---
+    st.markdown("---")
+    
+    # Contenedor principal de acción
+    col_act, col_viz = st.columns([1, 3])
+    
+    with col_act:
+        st.markdown("#### Panel de Control")
+        st.markdown("Inicie el proceso para generar el modelo y visualizar las métricas.")
+        
+        # Botón de acción
+        # Si ya está entrenado, el botón permite "Re-entrenar"
+        btn_label = "▶️ Iniciar Entrenamiento" if not st.session_state['svm_is_trained'] else "🔄 Re-entrenar Modelo"
+        
+        if st.button(btn_label, type="primary", use_container_width=True):
+            # Resetear estado para forzar animación
+            st.session_state['svm_is_trained'] = False
+            # Crear placeholders
+            with col_viz:
+                bar_ph = st.empty()
+                plot_ph = st.empty()
+                run_simulation(report, bar_ph, plot_ph)
+                # Al terminar run_simulation, se pone svm_is_trained = True
+                st.rerun()
+
+    # --- MOSTRAR RESULTADOS (Solo si ya se entrenó) ---
+    if st.session_state['svm_is_trained']:
+        mostrar_resultados_post_entrenamiento(report)
+    else:
+        with col_viz:
+            # Estado inicial vacío o imagen placeholder
+            st.info("El modelo está listo para ser entrenado. Presione el botón a la izquierda.")
 
 if __name__ == "__main__":
     mostrar()
