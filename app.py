@@ -6,6 +6,7 @@ from ui import MLP as mlp
 from ui import MLP as mlp_analysis
 from ui import inferenciaMLP as mlp_inference
 from ui import comparacion
+from ui import Dataset as dataset
 
 st.set_page_config(
     page_title="Breast Cancer Diagnosis",
@@ -18,6 +19,7 @@ def main():
         "Ir a:",
         (
             "Inicio", 
+            "Explorador de Datos",
             "MLP (análisis)",  
             "MLP (probador)", 
             "SVM (Análisis)",        
@@ -44,7 +46,8 @@ def main():
         mlp_analysis.mostrar()
     elif pagina == "MLP (probador)":
         mlp_inference.mostrar()
-    
+    elif pagina == "Explorador de Datos":
+        dataset.mostrar()
 
 if __name__ == "__main__":
     main()
