@@ -5,8 +5,22 @@ import os
 def mostrar():
     # --- TÍTULO PRINCIPAL ---
     st.caption("Ruta: Inicio")
-    st.title("🔬 Sistema de Diagnóstico de Cáncer de Mama")
-    st.markdown("### Comparativa de Modelos de Machine Learning: MLP vs SVM")
+    st.markdown(
+        """
+        <h1 style="color:#4A148C; margin-bottom:0.1rem;">
+            🔬 Sistema de Diagnóstico de Cáncer de Mama
+        </h1>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        """
+        <h3 style="color:#8E24AA; margin-top:0;">
+            Comparativa de Modelos de Machine Learning: MLP vs SVM
+        </h3>
+        """,
+        unsafe_allow_html=True,
+    )
     st.markdown("---")
 
     # --- INTRODUCCIÓN ---

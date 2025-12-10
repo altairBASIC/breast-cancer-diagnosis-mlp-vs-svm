@@ -1,5 +1,12 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
+
+
+COLOR_SVM = "#1f77b4"  # Azul consistente para SVM
+COLOR_MLP = "#6A1B9A"  # Morado consistente para MLP
+COLOR_PURPLE_BG = "#F3E5F5"  # Fondo suave morado para resaltar secciones
+COLOR_PURPLE_TEXT = "#4A148C"  # Texto morado oscuro para títulos/destacados
 
 
 def _get_historial_svm() -> pd.DataFrame:
@@ -25,6 +32,18 @@ def mostrar() -> None:
     st.title("📊 Analítica de Sesión")
     st.markdown(
         "Resumen de las predicciones realizadas en esta sesión para los modelos **SVM** y **MLP**."
+    )
+
+    # Banda descriptiva en tonos morados para dar identidad visual a la vista
+    st.markdown(
+        f"""
+        <div style="background-color:{COLOR_PURPLE_BG}; padding: 0.75rem 1rem; border-radius: 0.6rem; margin-bottom: 0.5rem;">
+            <span style="color:{COLOR_PURPLE_TEXT}; font-weight: 600;">
+                Vista general del uso de los probadores durante la sesión actual.
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     df_svm = _get_historial_svm()
@@ -69,13 +88,24 @@ def mostrar() -> None:
 
     if rows:
         df_counts = pd.DataFrame(rows)
-        pivot = (
-            df_counts
-            .pivot(index="Diagnóstico", columns="Modelo", values="Cantidad")
-            .fillna(0)
-            .astype(int)
+        # Gráfico en Plotly usando la paleta consistente (SVM azul, MLP morado)
+        fig = px.bar(
+            df_counts,
+            x="Diagnóstico",
+            y="Cantidad",
+            color="Modelo",
+            barmode="group",
+            color_discrete_map={"SVM": COLOR_SVM, "MLP": COLOR_MLP},
+            title="Distribución de diagnósticos por modelo",
         )
-        st.bar_chart(pivot)
+        fig.update_layout(
+            height=350,
+            margin=dict(l=20, r=20, t=50, b=30),
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        )
+        st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("No hay suficientes datos para graficar la distribución de diagnósticos.")
 

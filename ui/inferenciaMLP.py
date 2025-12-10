@@ -84,7 +84,7 @@ def mostrar():
 
     # --- INPUTS ---
     with st.container(border=True):
-        tab1, tab2, tab3 = st.tabs(["📏 Medias", "📉 Errores", "🚩 Peores"])
+        tab1, tab2, tab3 = st.tabs(["📏 Medias", "📉 Errores estándar", "🚩 Peores Valores"])
         with tab1: render_input_group(FEATURES_MEAN)
         with tab2: render_input_group(FEATURES_SE)
         with tab3: render_input_group(FEATURES_WORST)
