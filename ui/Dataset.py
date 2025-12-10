@@ -3,24 +3,24 @@ import pandas as pd
 import json
 import os
 import plotly.express as px
-import plotly.graph_objects as go
 
 # --- CONFIGURACIÓN DE RUTAS ---
-# Ajusta estas rutas si tus archivos están en otro lugar
 PATH_RAW = "data/breast_cancer.csv"
 PATH_PROC = "data/processed/"
-
 
 @st.cache_data(show_spinner=False)
 def load_data():
     """Carga los datasets y metadatos."""
     data = {}
-    
-    # 1. Cargar Original
     if os.path.exists(PATH_RAW):
-        data["raw"] = pd.read_csv(PATH_RAW)
+        # Intentamos cargar con separador , o ; por seguridad
+        try:
+            data["raw"] = pd.read_csv(PATH_RAW, sep=',')
+            if data["raw"].shape[1] < 2: # Si cargó mal, intentamos con ;
+                data["raw"] = pd.read_csv(PATH_RAW, sep=';')
+        except:
+            pass
     
-    # 2. Cargar Procesados (CSV es más rápido para visualizar que .npy)
     train_path = os.path.join(PATH_PROC, "train_data.csv")
     test_path = os.path.join(PATH_PROC, "test_data.csv")
     
@@ -29,7 +29,6 @@ def load_data():
     if os.path.exists(test_path):
         data["test"] = pd.read_csv(test_path)
         
-    # 3. Cargar Reportes
     report_path = os.path.join(PATH_PROC, "preprocessing_report.json")
     if os.path.exists(report_path):
         with open(report_path, 'r') as f:
@@ -38,118 +37,119 @@ def load_data():
     return data
 
 def plot_target_distribution(df, title, target_col="diagnosis"):
-    """Grafica la distribución de clases."""
-    if target_col not in df.columns: return None
+    """
+    Grafica la distribución usando el DataFrame directo para evitar errores de conteo.
+    """
+    if target_col not in df.columns: 
+        return None
     
-    counts = df[target_col].value_counts().reset_index()
-    counts.columns = [target_col, "count"]
+    # Creamos una copia para no afectar el dataframe original con el mapeo
+    df_plot = df.copy()
     
+    # Aseguramos que los valores sean string para que el mapa funcione bien
+    df_plot[target_col] = df_plot[target_col].astype(str)
+    
+    # Mapeo de etiquetas para que se vea bonito en el gráfico
+    mapeo = {
+        "0": "Benigno", "1": "Maligno", 
+        "B": "Benigno", "M": "Maligno",
+        "0.0": "Benigno", "1.0": "Maligno"
+    }
+    df_plot["Etiqueta"] = df_plot[target_col].map(mapeo).fillna(df_plot[target_col])
+    
+    # --- CAMBIO CLAVE: Usamos el DF completo, Plotly cuenta solo ---
     fig = px.pie(
-        counts, 
-        names=target_col, 
-        values="count", 
-        title=title,
+        df_plot, 
+        names="Etiqueta", 
+        title=title, 
         hole=0.4,
-        color_discrete_sequence=['#66b3ff', '#ff9999'] # Azul/Rojo suave
+        color="Etiqueta",
+        color_discrete_map={"Benigno": "#2ca02c", "Maligno": "#d62728"}
     )
     return fig
 
 def mostrar():
     st.caption("Inicio > Explorador de Datos")
-    st.markdown(
-        '<h1 style="color:#4A148C;">📂 Explorador de Datos</h1>',
-        unsafe_allow_html=True,
-    )
-    st.markdown("Esta vista permite explorar el dataset original y las particiones train/test generadas tras el preprocesamiento.")
+    st.markdown('<h1 style="color:#4A148C;">📂 Explorador de Datos</h1>', unsafe_allow_html=True)
 
     data = load_data()
 
-    # --- TABS PARA ORGANIZAR ---
-    tab1, tab2, tab3 = st.tabs([
-        "📊 Dataset Original",
-        "✂️ Train/Test Split",
-        "📝 Reporte Técnico",
-    ])
-    st.caption("Consejo: use las pestañas para alternar entre vista general, particiones y reporte técnico de preprocesamiento.")
+    # --- TABS ---
+    tab1, tab2, tab3 = st.tabs(["📊 Dataset Original", "✂️ Train/Test Split", "📝 Reporte Técnico"])
 
-    # TAB 1: DATASET ORIGINAL
+    # TAB 1: ORIGINAL
     with tab1:
         df = data.get("raw")
         if df is not None:
             st.markdown(f"**Dimensiones:** {df.shape[0]} filas, {df.shape[1]} columnas")
             
-            # Vista previa
-            st.dataframe(df.head(10), use_container_width=True)
+            # Verificación rápida de la columna diagnosis
+            if "diagnosis" in df.columns:
+                conteo_real = df["diagnosis"].value_counts()
+                st.caption(f"Conteo real en datos: {conteo_real.to_dict()}")
+            
+            st.dataframe(df.head(), use_container_width=True)
             
             c1, c2 = st.columns([1, 2])
             with c1:
-                # Gráfico de distribución
-                fig = plot_target_distribution(df, "Distribución de Diagnóstico")
+                # El gráfico corregido se llama aquí
+                fig = plot_target_distribution(df, "Distribución Real del Dataset")
                 if fig: st.plotly_chart(fig, use_container_width=True)
+                else: st.warning("No se encontró la columna 'diagnosis'.")
             with c2:
-                # Estadísticas básicas
-                st.markdown("###### Estadísticas Descriptivas")
+                st.markdown("###### Estadísticas")
                 st.dataframe(df.describe(), use_container_width=True, height=300)
-                
-            # Botón de descarga
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("📥 Descargar Dataset Original", csv, "breast_cancer_raw.csv", "text/csv")
         else:
-            st.warning(f"No se encontró el archivo en `{PATH_RAW}`. Por favor verifica que esté en la carpeta `data/`.")
+            st.warning("No se encontró el archivo raw.")
 
-    # TAB 2: TRAIN / TEST
+    # TAB 2: TRAIN / TEST (SOLO TABLA)
     with tab2:
         df_tr = data.get("train")
         df_te = data.get("test")
         
         if df_tr is not None and df_te is not None:
             col_tr, col_te = st.columns(2)
-            
             with col_tr:
-                st.info(f"### Set de Entrenamiento ({df_tr.shape[0]} muestras)")
+                st.info(f"### Entrenamiento ({len(df_tr)})")
                 st.dataframe(df_tr.head(), use_container_width=True)
-                
             with col_te:
-                st.info(f"### Set de Prueba ({df_te.shape[0]} muestras)")
+                st.info(f"### Prueba ({len(df_te)})")
                 st.dataframe(df_te.head(), use_container_width=True)
 
             st.divider()
+            st.markdown("### 📋 Conteo Detallado de Clases")
+
+            # --- LÓGICA DE TABLA ---
+            target = "diagnosis"
             
-            # Comparativa visual de balance
-            st.markdown("#### Balance de Clases: Entrenamiento vs Prueba")
-            
-            # Preparar datos para gráfico agrupado
-            target = "diagnosis" # Asumiendo que la columna se llama 'diagnosis' en el CSV procesado
-            if target in df_tr.columns:
-                tr_counts = df_tr[target].value_counts().reset_index()
-                tr_counts["Set"] = "Entrenamiento"
-                te_counts = df_te[target].value_counts().reset_index()
-                te_counts["Set"] = "Prueba"
-                
-                # Unificar nombres de columnas para concatenar
-                tr_counts.columns = [target, "count", "Set"]
-                te_counts.columns = [target, "count", "Set"]
-                
-                df_all = pd.concat([tr_counts, te_counts])
-                
-                fig_bar = px.bar(
-                    df_all, x="Set", y="count", color=target, 
-                    barmode="group",
-                    text="count",
-                    color_discrete_sequence=['#1f77b4', '#ff7f0e'] # Colores SVM/Test
-                )
-                st.plotly_chart(fig_bar, use_container_width=True)
+            def contar_clases(df, col):
+                if col not in df.columns: return 0, 0
+                # Convertimos a string para asegurar que atrapamos 0, '0', 0.0, etc.
+                vals = df[col].astype(str)
+                benignos = vals.isin(['0', '0.0', 'B', 'Benigno']).sum()
+                malignos = vals.isin(['1', '1.0', 'M', 'Maligno']).sum()
+                return benignos, malignos
+
+            b_train, m_train = contar_clases(df_tr, target)
+            b_test, m_test = contar_clases(df_te, target)
+
+            tabla_resumen = pd.DataFrame({
+                "Conjunto": ["Entrenamiento", "Prueba", "TOTAL"],
+                "🟢 Benignos": [b_train, b_test, b_train + b_test],
+                "🔴 Malignos": [m_train, m_test, m_train + m_test],
+                "Total": [len(df_tr), len(df_te), len(df_tr) + len(df_te)]
+            })
+
+            st.table(tabla_resumen.set_index("Conjunto"))
+
         else:
-            st.error(f"Faltan archivos en `{PATH_PROC}`. Asegúrate de tener `train_data.csv` y `test_data.csv`.")
+            st.error("Faltan los archivos procesados.")
 
     # TAB 3: REPORTE
     with tab3:
         report = data.get("report")
-        if report:
-            st.markdown("### 📋 Detalles del Preprocesamiento")
-            st.json(report)
-        else:
-            st.info("No se encontró el archivo `preprocessing_report.json`.")
+        if report: st.json(report)
+        else: st.info("No hay reporte disponible.")
 
 if __name__ == "__main__":
     mostrar()
