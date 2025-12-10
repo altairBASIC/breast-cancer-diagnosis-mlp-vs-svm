@@ -1,53 +1,42 @@
 import streamlit as st
 from ui import SVM as svm
-from ui import InferenciaSVM as inferencia # 
-from ui import inicio  
-from ui import MLP as mlp
+from ui import InferenciaSVM as svm_inference
+from ui import inicio
 from ui import MLP as mlp_analysis
 from ui import inferenciaMLP as mlp_inference
 from ui import comparacion
 from ui import Dataset as dataset
 
+
 st.set_page_config(
     page_title="Breast Cancer Diagnosis",
-    layout="wide", 
-    page_icon="🩺"
+    layout="wide",
+    page_icon="🩺",
 )
-def main():
+
+
+PAGES = {
+    "Inicio": inicio.mostrar,
+    "Explorador de Datos": dataset.mostrar,
+    "MLP (análisis)": mlp_analysis.mostrar,
+    "MLP (probador)": mlp_inference.mostrar,
+    "SVM (Análisis)": svm.mostrar,
+    "SVM (Probador)": svm_inference.mostrar,
+    "Comparación": comparacion.mostrar,
+    "Analítica Web": lambda: st.info("La sección de analítica web aún no está implementada."),
+}
+
+
+def main() -> None:
     st.sidebar.title("Navegación")
-    pagina = st.sidebar.radio(
-        "Ir a:",
-        (
-            "Inicio", 
-            "Explorador de Datos",
-            "MLP (análisis)",  
-            "MLP (probador)", 
-            "SVM (Análisis)",        
-            "SVM (Probador)",        
-            "Comparación", 
-            "Analítica Web"
-        )
-    )
+    pagina = st.sidebar.radio("Ir a:", list(PAGES.keys()))
 
-    if pagina == "Inicio":
-        # ... inicio ...
-        inicio.mostrar()
+    pagina_funcion = PAGES.get(pagina)
+    if pagina_funcion is not None:
+        pagina_funcion()
+    else:
+        st.error("La página seleccionada no está disponible.")
 
-        pass
-    elif pagina == "SVM (Análisis)":
-        svm.mostrar()
-    elif pagina == "SVM (Probador)": 
-        inferencia.mostrar()
-    elif pagina == "Comparación":
-        comparacion.mostrar()
-    elif pagina == "Analítica Web":
-        pass
-    elif pagina == "MLP (análisis)":
-        mlp_analysis.mostrar()
-    elif pagina == "MLP (probador)":
-        mlp_inference.mostrar()
-    elif pagina == "Explorador de Datos":
-        dataset.mostrar()
 
 if __name__ == "__main__":
     main()

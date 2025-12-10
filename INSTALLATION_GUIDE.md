@@ -143,6 +143,7 @@ La capa MongoDB es opcional; el proyecto funciona sin DB para entrenamiento y St
 
 Con MongoDB ejecutándose y el entorno virtual activo:
 
+#### Paso 1: Activar el entorno virtual (si no está activado)
 ```powershell
 python scripts/load_to_mongo.py
 ```
