@@ -35,6 +35,7 @@ def get_metric_value(metrics_dict, long_name):
     if short_name and short_name in metrics_dict: return metrics_dict[short_name]
     return 0.0
 
+@st.cache_resource(show_spinner=False)
 def load_data():
     json_path = 'models/svm_training_report.json'
     model_path = 'models/svm_model.pkl'
@@ -320,8 +321,9 @@ def mostrar_resultados_post_entrenamiento(report):
     mostrar_estadisticas(report)
 
 def mostrar():
+    st.caption("Ruta: Inicio > SVM (análisis)")
     st.title("Support Vector Machine (SVM)")
-    st.markdown("Plataforma de entrenamiento y análisis de vectores de soporte.")
+    st.markdown("Esta vista permite simular el entrenamiento y analizar el rendimiento del modelo SVM sobre el dataset preprocesado.")
     
     report, model = load_data()
     
@@ -334,13 +336,14 @@ def mostrar():
 
     # --- SECCIÓN SUPERIOR: ENTRENAMIENTO ---
     st.markdown("---")
+    st.caption("Nota: la simulación recorre la curva de aprendizaje paso a paso para ilustrar cómo mejora el modelo con más datos.")
     
     # Contenedor principal de acción
     col_act, col_viz = st.columns([1, 3])
     
     with col_act:
         st.markdown("#### Panel de Control")
-        st.markdown("Inicie el proceso para generar el modelo y visualizar las métricas.")
+        st.markdown("Inicie o repita la simulación de entrenamiento para actualizar las métricas mostradas debajo.")
         
         # Botón de acción
         # Si ya está entrenado, el botón permite "Re-entrenar"

@@ -6,6 +6,7 @@ from ui import MLP as mlp_analysis
 from ui import inferenciaMLP as mlp_inference
 from ui import comparacion
 from ui import Dataset as dataset
+from ui import AnaliticaWeb as analytics_web
 
 
 st.set_page_config(
@@ -23,7 +24,7 @@ PAGES = {
     "SVM (Análisis)": svm.mostrar,
     "SVM (Probador)": svm_inference.mostrar,
     "Comparación": comparacion.mostrar,
-    "Analítica Web": lambda: st.info("La sección de analítica web aún no está implementada."),
+    "Analítica Web": analytics_web.mostrar,
 }
 
 

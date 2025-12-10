@@ -5,6 +5,8 @@ import pandas as pd
 import os
 from datetime import datetime
 
+from ui.common_features import build_tooltip
+
 # --- CONFIGURACIÓN ---
 FEATURES_MEAN = [
     "mean radius", "mean texture", "mean perimeter", "mean area", "mean smoothness",
@@ -21,6 +23,8 @@ FEATURES_WORST = [
 
 ALL_FEATURES = FEATURES_MEAN + FEATURES_SE + FEATURES_WORST
 
+
+@st.cache_resource(show_spinner=False)
 def load_model():
     model_path = 'models/mlp_model.pkl'
     if os.path.exists(model_path):
@@ -52,12 +56,14 @@ def render_input_group(features_list):
                              .capitalize(),
                 step=0.1,
                 format="%.2f",
-                key=key,          #
+                key=key,
+                help=build_tooltip(feature),
             )
 
 def mostrar():
+    st.caption("Ruta: Inicio > MLP (probador)")
     st.title("🧪 Probador MLP")
-    st.markdown("Diagnóstico utilizando Redes Neuronales.")
+    st.markdown("Esta vista permite realizar diagnósticos caso a caso utilizando el modelo MLP entrenado.")
     
     model = load_model()
 
@@ -68,7 +74,12 @@ def mostrar():
     c_title, _, c_rand = st.columns([3, 4, 1.5], gap="small")
     with c_rand:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🎲 Cargar Ejemplo", key="btn_rnd_mlp", use_container_width=True):
+        if st.button(
+            "🎲 Cargar Ejemplo",
+            key="btn_rnd_mlp",
+            use_container_width=True,
+            help="Rellena los campos con un caso sintético ya escalado para probar el MLP.",
+        ):
             generar_valores_aleatorios()
 
     # --- INPUTS ---
@@ -83,7 +94,12 @@ def mostrar():
     # --- BOTÓN ---
     _, c_btn, _ = st.columns([2, 2, 2])
     with c_btn:
-        submitted = st.button("🧠 Ejecutar Análisis", type="primary", use_container_width=True)
+        submitted = st.button(
+            "🧠 Ejecutar Análisis",
+            type="primary",
+            use_container_width=True,
+            help="Ejecuta el modelo MLP con los valores ingresados y calcula el diagnóstico.",
+        )
 
     # --- RESULTADO ---
     if submitted and model:

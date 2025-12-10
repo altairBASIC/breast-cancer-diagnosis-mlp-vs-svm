@@ -39,6 +39,7 @@ def get_best_metric_value(metrics_dict, metric_type):
             return metrics_dict[key]
     return 0.0
 
+@st.cache_resource(show_spinner=False)
 def load_data():
     # Rutas específicas para el MLP
     json_path = 'models/mlp_training_report.json'
@@ -91,25 +92,35 @@ def mostrar_estadisticas(report):
                         c2.markdown(f"`{value}`")
 
 def plot_confusion_matrix(cm_data, title):
-    if not cm_data: return None
+    if not cm_data:
+        return None
     try:
         cm_array = np.array([
-            [cm_data.get('true_negatives',0), cm_data.get('false_positives',0)],
-            [cm_data.get('false_negatives',0), cm_data.get('true_positives',0)]
+            [cm_data.get("true_negatives", 0), cm_data.get("false_positives", 0)],
+            [cm_data.get("false_negatives", 0), cm_data.get("true_positives", 0)],
         ])
         fig, ax = plt.subplots(figsize=(3.5, 2.5))
         # Usamos 'Purples' para diferenciar del SVM (que es azul)
-        sns.heatmap(cm_array, annot=True, fmt='d', cmap='Purples', cbar=False, ax=ax,
-                    annot_kws={"size": 10},
-                    xticklabels=['Benigno', 'Maligno'], yticklabels=['Benigno', 'Maligno'])
-        
-        ax.set_ylabel('Realidad', fontsize=8)
-        ax.set_xlabel('Predicción', fontsize=8)
+        sns.heatmap(
+            cm_array,
+            annot=True,
+            fmt="d",
+            cmap="Purples",
+            cbar=False,
+            ax=ax,
+            annot_kws={"size": 10},
+            xticklabels=["Benigno", "Maligno"],
+            yticklabels=["Benigno", "Maligno"],
+        )
+
+        ax.set_ylabel("Realidad", fontsize=8)
+        ax.set_xlabel("Predicción", fontsize=8)
         ax.set_title(title, fontsize=10, pad=8)
-        ax.tick_params(axis='both', which='major', labelsize=8)
+        ax.tick_params(axis="both", which="major", labelsize=8)
         plt.tight_layout()
         return fig
-    except: return None
+    except Exception:
+        return None
 
 def generar_explicacion_matriz(cm, tipo=""):
     if not cm: return ""
@@ -232,8 +243,10 @@ def mostrar_graficos(report):
                 if fig_lc: st.pyplot(fig_lc, use_container_width=True)
 
 def mostrar():
+    st.caption("Ruta: Inicio > MLP (análisis)")
     st.title("Red Neuronal (MLP)")
-    st.markdown("Análisis de rendimiento: Perceptrón Multicapa")
+    st.markdown("Esta vista muestra métricas de entrenamiento y prueba del modelo MLP sobre el dataset preprocesado.")
+    st.caption("Sugerencia: revise primero las matrices de confusión y luego la curva de aprendizaje para entender el comportamiento del modelo.")
     report, model = load_data()
     mostrar_estadisticas(report)
     mostrar_graficos(report)

@@ -4,6 +4,7 @@ import os
 
 def mostrar():
     # --- TÍTULO PRINCIPAL ---
+    st.caption("Ruta: Inicio")
     st.title("🔬 Sistema de Diagnóstico de Cáncer de Mama")
     st.markdown("### Comparativa de Modelos de Machine Learning: MLP vs SVM")
     st.markdown("---")

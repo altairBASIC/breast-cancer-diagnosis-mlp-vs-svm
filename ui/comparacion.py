@@ -73,8 +73,9 @@ def plot_benchmark(df_metrics):
     return fig
 
 def mostrar():
+    st.caption("Ruta: Inicio > Comparación")
     st.title("⚖️ Comparación de Modelos")
-    st.markdown("Análisis competitivo entre **Support Vector Machine** y **Perceptrón Multicapa**.")
+    st.markdown("Esta vista compara lado a lado el rendimiento y tiempos de entrenamiento de los modelos SVM y MLP.")
     
     data = load_reports()
     

@@ -10,6 +10,8 @@ import plotly.graph_objects as go
 PATH_RAW = "data/breast_cancer.csv"
 PATH_PROC = "data/processed/"
 
+
+@st.cache_data(show_spinner=False)
 def load_data():
     """Carga los datasets y metadatos."""
     data = {}
@@ -53,13 +55,19 @@ def plot_target_distribution(df, title, target_col="diagnosis"):
     return fig
 
 def mostrar():
+    st.caption("Ruta: Inicio > Explorador de Datos")
     st.title("📂 Explorador de Datos")
-    st.markdown("Visualización del dataset original, particiones y reporte de preprocesamiento.")
+    st.markdown("Esta vista permite explorar el dataset original y las particiones train/test generadas tras el preprocesamiento.")
 
     data = load_data()
 
     # --- TABS PARA ORGANIZAR ---
-    tab1, tab2, tab3 = st.tabs(["📊 Dataset Original", "✂️ Train/Test Split", "📝 Reporte Técnico"])
+    tab1, tab2, tab3 = st.tabs([
+        "📊 Dataset Original",
+        "✂️ Train/Test Split",
+        "📝 Reporte Técnico",
+    ])
+    st.caption("Consejo: use las pestañas para alternar entre vista general, particiones y reporte técnico de preprocesamiento.")
 
     # TAB 1: DATASET ORIGINAL
     with tab1:

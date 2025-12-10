@@ -5,6 +5,8 @@ import pandas as pd
 import os
 from datetime import datetime
 
+from ui.common_features import build_tooltip
+
 # --- CONFIGURACIÓN Y CONSTANTES ---
 FEATURES_MEAN = [
     "mean radius", "mean texture", "mean perimeter", "mean area", "mean smoothness",
@@ -18,42 +20,11 @@ FEATURES_WORST = [
     "worst radius", "worst texture", "worst perimeter", "worst area", "worst smoothness",
     "worst compactness", "worst concavity", "worst concave points", "worst symmetry", "worst fractal dimension"
 ]
-# Descripciones base de cada característica
-FEATURE_DESCRIPTIONS = {
-    "radius": "radio del tumor (distancia promedio del centro al borde).",
-    "texture": "variación de la intensidad de la imagen; qué tan rugosa se ve la zona.",
-    "perimeter": "perímetro del contorno del tumor.",
-    "area": "área de la región del tumor en la imagen.",
-    "smoothness": "qué tan suaves o irregulares son las variaciones del radio.",
-    "compactness": "qué tan compacto es el tumor (relación perímetro² / área).",
-    "concavity": "qué tan profundas son las zonas cóncavas del contorno.",
-    "concave points": "cantidad de puntos cóncavos en el contorno.",
-    "symmetry": "simetría de la forma del tumor.",
-    "fractal dimension": "complejidad del borde (aproximación de dimensión fractal).",
-}
-def build_tooltip(feature: str) -> str:
-    """
-    Genera el texto del tooltip según si es media, error estándar o peor valor.
-    """
-    base = feature
-    prefix = ""
-
-    if feature.startswith("mean "):
-        prefix = "Valor medio de "
-        base = feature.replace("mean ", "")
-    elif feature.endswith(" error"):
-        prefix = "Error estándar de "
-        base = feature.replace(" error", "")
-    elif feature.startswith("worst "):
-        prefix = "Peor valor de "
-        base = feature.replace("worst ", "")
-
-    desc = FEATURE_DESCRIPTIONS.get(base, base)
-    return prefix + desc.capitalize()
-
 
 ALL_FEATURES = FEATURES_MEAN + FEATURES_SE + FEATURES_WORST
 
+
+@st.cache_resource(show_spinner=False)
 def load_model():
     model_path = 'models/svm_model.pkl'
     if os.path.exists(model_path):
@@ -98,6 +69,7 @@ def render_input_group(features_list):
             )
 
 def mostrar():
+    st.caption("Ruta: Inicio > SVM (probador)")
     model = load_model()
 
     # --- INICIALIZAR HISTORIAL EN SESIÓN ---
@@ -107,11 +79,15 @@ def mostrar():
     # --- ENCABEZADO ---
     c_title, c_fill, c_rand = st.columns([3, 4, 1.5], gap="small")
     with c_title:
-        st.title("🧪 Probador de Casos")
-        st.caption("Ingrese datos normalizados para predicción.")
+        st.title("🧪 Probador de Casos (SVM)")
+        st.caption("Esta vista permite evaluar nuevos casos clínicos normalizados usando el modelo SVM entrenado.")
     with c_rand:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🎲 Cargar Ejemplo Aleatorio", use_container_width=True):
+        if st.button(
+            "🎲 Cargar Ejemplo Aleatorio",
+            use_container_width=True,
+            help="Carga valores de ejemplo ya normalizados para que pueda probar rápidamente el modelo.",
+        ):
             generar_valores_aleatorios()
 
     # --- PANEL DE INPUTS ---
@@ -126,7 +102,12 @@ def mostrar():
     # --- BOTÓN DE ACCIÓN ---
     _, c_btn, _ = st.columns([2, 2, 2])
     with c_btn:
-        submitted = st.button("🔍 Analizar Patrones Clínicos", type="primary", use_container_width=True)
+        submitted = st.button(
+            "🔍 Analizar Patrones Clínicos",
+            type="primary",
+            use_container_width=True,
+            help="Ejecuta el modelo SVM con los valores ingresados y genera un diagnóstico.",
+        )
 
     # --- RESULTADO Y GUARDADO ---
     if submitted and model:
