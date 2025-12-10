@@ -73,8 +73,11 @@ def plot_benchmark(df_metrics):
     return fig
 
 def mostrar():
-    st.caption("Ruta: Inicio > Comparación")
-    st.title("⚖️ Comparación de Modelos")
+    st.caption("Inicio > Comparación")
+    st.markdown(
+        '<h1 style="color:#4A148C;">⚖️ Comparación de Modelos</h1>',
+        unsafe_allow_html=True,
+    )
     st.markdown("Esta vista compara lado a lado el rendimiento y tiempos de entrenamiento de los modelos SVM y MLP.")
     
     data = load_reports()
@@ -125,11 +128,38 @@ def mostrar():
     fastest_time = min(t_svm, t_mlp)
 
     with c1:
-        st.metric("Mejor Exactitud", f"{best_acc_model}", f"{best_acc_val:.2%}")
+        st.markdown(
+            f"""
+            <div style="background-color:#F3E5F5; padding: 1rem 1.2rem; border-radius: 0.75rem; min-height: 150px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.4rem;">Mejor Exactitud</h4>
+                <p style="margin:0 0 0.2rem 0;"><strong>Modelo ganador:</strong> {best_acc_model}</p>
+                <p style="margin:0;"><strong>Exactitud:</strong> {best_acc_val:.2%}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     with c2:
-        st.metric("Mejor Sensibilidad", f"{best_rec_model}", f"{best_rec_val:.2%}")
+        st.markdown(
+            f"""
+            <div style="background-color:#EDE7F6; padding: 1rem 1.2rem; border-radius: 0.75rem; min-height: 150px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.4rem;">Mejor Sensibilidad</h4>
+                <p style="margin:0 0 0.2rem 0;"><strong>Modelo ganador:</strong> {best_rec_model}</p>
+                <p style="margin:0;"><strong>Sensibilidad:</strong> {best_rec_val:.2%}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     with c3:
-        st.metric("Entrenamiento más Rápido", f"{fastest_model}", f"{fastest_time:.2f} s")
+        st.markdown(
+            f"""
+            <div style="background-color:#F3E5F5; padding: 1rem 1.2rem; border-radius: 0.75rem; min-height: 150px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.4rem;">Entrenamiento más Rápido</h4>
+                <p style="margin:0 0 0.2rem 0;"><strong>Modelo ganador:</strong> {fastest_model}</p>
+                <p style="margin:0;"><strong>Tiempo:</strong> {fastest_time:.2f} s</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.divider()
 

@@ -4,7 +4,7 @@ import os
 
 def mostrar():
     # --- TÍTULO PRINCIPAL ---
-    st.caption("Ruta: Inicio")
+    st.caption("Inicio")
     st.markdown(
         """
         <h1 style="color:#4A148C; margin-bottom:0.1rem;">
@@ -48,8 +48,8 @@ def mostrar():
             """
             <div style="background-color: #693A66; padding: 20px; border-radius: 10px; text-align: center;">
                 <span style="font-size: 50px;">🩺</span>
-                <h3>Soporte a la Decisión Médica</h3>
-                <p>Inteligencia Artificial aplicada a la salud.</p>
+                <h3 style="color:#000000;">Soporte a la Decisión Médica</h3>
+                <p style="color:#000000;">Inteligencia Artificial aplicada a la salud.</p>
             </div>
             """, 
             unsafe_allow_html=True
@@ -64,20 +64,48 @@ def mostrar():
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
     
     with col_m1:
-        st.markdown("#### 1. Datos")
-        st.markdown("Gestión y almacenamiento de registros clínicos estructurados usando **MongoDB**.")
+        st.markdown(
+            """
+            <div style="background-color:#F3E5F5; padding: 1rem; border-radius: 0.75rem; min-height: 140px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.5rem;">1. Datos</h4>
+                <p style="margin:0;">Gestión y almacenamiento de registros clínicos estructurados usando <strong>MongoDB</strong>.</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     
     with col_m2:
-        st.markdown("#### 2. Proceso")
-        st.markdown("Limpieza, normalización (StandardScaler) y división de datos con **Scikit-learn**.")
+        st.markdown(
+            """
+            <div style="background-color:#EDE7F6; padding: 1rem; border-radius: 0.75rem; min-height: 140px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.5rem;">2. Proceso</h4>
+                <p style="margin:0;">Limpieza, normalización (<strong>StandardScaler</strong>) y división de datos con <strong>Scikit-learn</strong>.</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     
     with col_m3:
-        st.markdown("#### 3. Modelado")
-        st.markdown("Entrenamiento y comparación de modelos **MLP** (Red Neuronal) y **SVM** (Vectores de Soporte).")
+        st.markdown(
+            """
+            <div style="background-color:#F3E5F5; padding: 1rem; border-radius: 0.75rem; min-height: 140px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.5rem;">3. Modelado</h4>
+                <p style="margin:0;">Entrenamiento y comparación de modelos <strong>MLP</strong> (Red Neuronal) y <strong>SVM</strong> (Vectores de Soporte).</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     
     with col_m4:
-        st.markdown("#### 4. Despliegue")
-        st.markdown("Interfaz interactiva para inferencia en tiempo real desarrollada con **Streamlit**.")
+        st.markdown(
+            """
+            <div style="background-color:#EDE7F6; padding: 1rem; border-radius: 0.75rem; min-height: 140px;">
+                <h4 style="color:#4A148C; margin-top:0; margin-bottom:0.5rem;">4. Despliegue</h4>
+                <p style="margin:0;">Interfaz interactiva para inferencia en tiempo real desarrollada con <strong>Streamlit</strong>.</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.markdown("---")
 
@@ -87,22 +115,34 @@ def mostrar():
     c_mlp, c_svm = st.columns(2)
     
     with c_mlp:
-        with st.container(border=True):
-            st.markdown("### MLP (Perceptrón Multicapa)")
-            st.markdown("""
-            Red neuronal artificial feedforward.
-            * Capaz de modelar relaciones no lineales complejas.
-            * Ideal para patrones profundos en los datos.
-            """)
+        st.markdown(
+            """
+            <div style="background-color:#F3E5F5; padding: 1rem 1.2rem; border-radius: 0.75rem; min-height: 170px;">
+                <h3 style="color:#4A148C; margin-top:0; margin-bottom:0.5rem;">MLP (Perceptrón Multicapa)</h3>
+                <p style="margin:0 0 0.4rem 0;">Red neuronal artificial <em>feedforward</em>.</p>
+                <ul style="padding-left:1.2rem; margin:0;">
+                    <li>Capaz de modelar relaciones no lineales complejas.</li>
+                    <li>Ideal para patrones profundos en los datos.</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     
     with c_svm:
-        with st.container(border=True):
-            st.markdown("### SVM (Support Vector Machine)")
-            st.markdown("""
-            Algoritmo de aprendizaje supervisado robusto.
-            * Busca el hiperplano óptimo para separar las clases.
-            * Alta eficacia en espacios de dimensiones altas.
-            """)
+        st.markdown(
+            """
+            <div style="background-color:#EDE7F6; padding: 1rem 1.2rem; border-radius: 0.75rem; min-height: 170px;">
+                <h3 style="color:#4A148C; margin-top:0; margin-bottom:0.5rem;">SVM (Support Vector Machine)</h3>
+                <p style="margin:0 0 0.4rem 0;">Algoritmo de aprendizaje supervisado robusto.</p>
+                <ul style="padding-left:1.2rem; margin:0;">
+                    <li>Busca el hiperplano óptimo para separar las clases.</li>
+                    <li>Alta eficacia en espacios de dimensiones altas.</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.success("👈 **Utilice el menú lateral para navegar entre el Análisis de Modelos y el Probador de Casos.**")

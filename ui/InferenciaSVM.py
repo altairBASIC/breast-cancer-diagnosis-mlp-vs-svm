@@ -69,7 +69,7 @@ def render_input_group(features_list):
             )
 
 def mostrar():
-    st.caption("Ruta: Inicio > SVM (probador)")
+    st.caption("Inicio > SVM (probador)")
     model = load_model()
 
     # --- INICIALIZAR HISTORIAL EN SESIÓN ---
@@ -79,7 +79,10 @@ def mostrar():
     # --- ENCABEZADO ---
     c_title, c_fill, c_rand = st.columns([3, 4, 1.5], gap="small")
     with c_title:
-        st.title("🧪 Probador de Casos (SVM)")
+        st.markdown(
+            '<h1 style="color:#4A148C;">🧪 Probador de Casos (SVM)</h1>',
+            unsafe_allow_html=True,
+        )
         st.caption("Esta vista permite evaluar nuevos casos clínicos normalizados usando el modelo SVM entrenado.")
     with c_rand:
         st.markdown("<br>", unsafe_allow_html=True)

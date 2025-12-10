@@ -61,8 +61,11 @@ def render_input_group(features_list):
             )
 
 def mostrar():
-    st.caption("Ruta: Inicio > MLP (probador)")
-    st.title("🧪 Probador MLP")
+    st.caption("Inicio > MLP (probador)")
+    st.markdown(
+        '<h1 style="color:#4A148C;">🧪 Probador MLP</h1>',
+        unsafe_allow_html=True,
+    )
     st.markdown("Esta vista permite realizar diagnósticos caso a caso utilizando el modelo MLP entrenado.")
     
     model = load_model()

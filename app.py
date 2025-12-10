@@ -15,6 +15,18 @@ st.set_page_config(
     page_icon="🩺",
 )
 
+# Color de fondo lila suave para el sidebar
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebar"] {
+            background-color: #F3E5F5;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 PAGES = {
     "Inicio": inicio.mostrar,
@@ -29,7 +41,10 @@ PAGES = {
 
 
 def main() -> None:
-    st.sidebar.title("Navegación")
+    st.sidebar.markdown(
+        '<h2 style="color:#4A148C;">Navegación</h2>',
+        unsafe_allow_html=True,
+    )
     pagina = st.sidebar.radio("Ir a:", list(PAGES.keys()))
 
     pagina_funcion = PAGES.get(pagina)

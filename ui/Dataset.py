@@ -55,8 +55,11 @@ def plot_target_distribution(df, title, target_col="diagnosis"):
     return fig
 
 def mostrar():
-    st.caption("Ruta: Inicio > Explorador de Datos")
-    st.title("📂 Explorador de Datos")
+    st.caption("Inicio > Explorador de Datos")
+    st.markdown(
+        '<h1 style="color:#4A148C;">📂 Explorador de Datos</h1>',
+        unsafe_allow_html=True,
+    )
     st.markdown("Esta vista permite explorar el dataset original y las particiones train/test generadas tras el preprocesamiento.")
 
     data = load_data()

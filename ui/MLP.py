@@ -243,8 +243,11 @@ def mostrar_graficos(report):
                 if fig_lc: st.pyplot(fig_lc, use_container_width=True)
 
 def mostrar():
-    st.caption("Ruta: Inicio > MLP (análisis)")
-    st.title("Red Neuronal (MLP)")
+    st.caption("Inicio > MLP (análisis)")
+    st.markdown(
+        '<h1 style="color:#4A148C;">Red Neuronal (MLP)</h1>',
+        unsafe_allow_html=True,
+    )
     st.markdown("Esta vista muestra métricas de entrenamiento y prueba del modelo MLP sobre el dataset preprocesado.")
     st.caption("Sugerencia: revise primero las matrices de confusión y luego la curva de aprendizaje para entender el comportamiento del modelo.")
     report, model = load_data()

@@ -321,8 +321,11 @@ def mostrar_resultados_post_entrenamiento(report):
     mostrar_estadisticas(report)
 
 def mostrar():
-    st.caption("Ruta: Inicio > SVM (análisis)")
-    st.title("Support Vector Machine (SVM)")
+    st.caption("Inicio > SVM (análisis)")
+    st.markdown(
+        '<h1 style="color:#4A148C;">Support Vector Machine (SVM)</h1>',
+        unsafe_allow_html=True,
+    )
     st.markdown("Esta vista permite simular el entrenamiento y analizar el rendimiento del modelo SVM sobre el dataset preprocesado.")
     
     report, model = load_data()

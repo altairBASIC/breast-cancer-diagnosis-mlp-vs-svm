@@ -28,8 +28,11 @@ def _get_historial_mlp() -> pd.DataFrame:
 
 
 def mostrar() -> None:
-    st.caption("Ruta: Inicio > Analítica Web")
-    st.title("📊 Analítica de Sesión")
+    st.caption("Inicio > Analítica Web")
+    st.markdown(
+        '<h1 style="color:#4A148C;">📊 Analítica de Sesión</h1>',
+        unsafe_allow_html=True,
+    )
     st.markdown(
         "Resumen de las predicciones realizadas en esta sesión para los modelos **SVM** y **MLP**."
     )
