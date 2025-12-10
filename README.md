@@ -1,44 +1,71 @@
 # Breast Cancer Diagnosis: MLP vs SVM
 
-## Descripcion del Proyecto
+## Descripción del Proyecto
 
-Este proyecto implementa y compara dos modelos de Machine Learning (Multi-Layer Perceptron (MLP) y Support Vector Machine (SVM)) para el diagnóstico de cáncer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning.
-El trabajo incluye un pipeline completo de ciencia de datos, abarcando la adquisición del dataset, el preprocesamiento, el análisis exploratorio de datos, el entrenamiento y evaluación de modelos, y la construcción de una aplicación web interactiva mediante Streamlit.
-Los modelos y los registros procesados se almacenan en MongoDB, permitiendo su consulta desde el frontend.
+Este proyecto implementa y compara dos modelos de Machine Learning —Multi-Layer Perceptron (MLP) y Support Vector Machine (SVM)— para el diagnóstico de cáncer de mama utilizando el dataset Breast Cancer Wisconsin (Diagnostic) del repositorio UCI Machine Learning.
+
+El trabajo incluye un pipeline completo de ciencia de datos:
+
+- Adquisición y exploración del dataset
+- Preprocesamiento y generación de conjuntos de entrenamiento/prueba
+- Entrenamiento y evaluación de modelos MLP y SVM
+- Generación de reportes de entrenamiento en formato JSON
+- Despliegue de una aplicación web interactiva (Streamlit) para explorar métricas y realizar predicciones
+
 El proyecto tiene fines estrictamente académicos y busca reforzar competencias en análisis de datos, modelamiento y despliegue de aplicaciones de Machine Learning.
 
 ## Objetivo
 
 Desarrollar un pipeline completo de Machine Learning que incluya:
 
-- Configuracion del entorno de desarrollo
-- Carga y almacenamiento de datos en MongoDB
-- Preprocesamiento y analisis exploratorio de datos
-- Entrenamiento y evaluacion de modelos MLP y SVM
-- Comparacion de metricas de rendimiento
-- Despliegue de una aplicacion interactiva con Streamlit
+- Configuración del entorno de desarrollo
+- Descarga y preparación del dataset
+- (Opcional) Carga y almacenamiento de datos en MongoDB
+- Preprocesamiento y análisis exploratorio de datos
+- Entrenamiento y evaluación de modelos MLP y SVM
+- Comparación de métricas de rendimiento
+- Despliegue de una aplicación interactiva con Streamlit
 
-## Estructura del Proyecto
+## Estructura del Proyecto (resumen)
 
 ```
 breast-cancer-diagnosis-mlp-vs-svm/
 │
 ├── data/                          # Dataset y archivos de datos
-│   ├── breast_cancer_data.csv     # Dataset descargado
-│   └── data_summary.txt           # Resumen estadistico del dataset
+│   ├── breast_cancer.csv          # Dataset preprocesado/descargado
+│   ├── data_summary.txt           # Resumen estadístico del dataset
+│   └── processed/                 # Datos ya procesados para modelado
+│       ├── X_train.npy
+│       ├── X_test.npy
+│       ├── y_train.npy
+│       ├── y_test.npy
+│       ├── feature_info.json
+│       └── preprocessing_report.json
 │
 ├── scripts/                       # Scripts de Python
-│   ├── setup_environment.py       # Configuracion y verificacion del entorno
-│   ├── download_dataset.py        # Descarga y procesamiento del dataset
-│   └── load_to_mongo.py           # Carga de datos a MongoDB
+│   ├── setup_environment.py       # Configuración y verificación del entorno
+│   ├── download_dataset.py        # Descarga del dataset
+│   ├── preprocessing.py           # Limpieza y preprocesamiento de datos
+│   └── load_to_mongo.py           # (Opcional) Carga de datos a MongoDB
 │
-├── notebooks/                     # Jupyter notebooks para analisis
+├── notebooks/                     # Jupyter notebooks para análisis y modelos
+│   ├── 01_data_preprocessing.ipynb
+│   ├── 02_mlp_training.ipynb
+│   └── 03_svm_training.ipynb
 │
-├── models/                        # Modelos entrenados guardados
+├── models/                        # Modelos entrenados y reportes
+│   ├── mlp_training_report.json
+│   └── svm_training_report.json
 │
+├── ui/                            # Recursos para la interfaz (logos, etc.)
+│   └── utem1.png
+│
+├── app.py                         # Aplicación Streamlit principal
 ├── requirements.txt               # Dependencias del proyecto
-├── setup_log.txt                  # Log de configuracion y ejecucion
-└── README.md                      # Documentacion del proyecto
+├── install.ps1                    # Script de instalación en Windows (automatizado)
+├── INSTALLATION_GUIDE.md          # Guía de instalación detallada
+├── setup_log.txt                  # Log de configuración y ejecución
+└── README.md                      # Documentación del proyecto
 ```
 
 ## Dataset
@@ -55,105 +82,96 @@ breast-cancer-diagnosis-mlp-vs-svm/
 
 **Atributos:** El dataset contiene mediciones computadas de imagenes digitalizadas de aspiracion con aguja fina (FNA) de masas mamarias, describiendo caracteristicas de los nucleos celulares presentes en la imagen.
 
-Para cada nucleo celular se calculan:
-
-- Media
-- Error estandar
-- Peor valor (promedio de los tres valores mas grandes)
-
-De las siguientes 10 caracteristicas:
-
-1. Radio
-2. Textura
-3. Perimetro
-4. Area
-5. Suavidad
-6. Compacidad
-7. Concavidad
-8. Puntos concavos
-9. Simetria
-10. Dimension fractal
-
 ## Requisitos Previos
 
 ### Software Necesario
 
-1. **Python 3.8 o superior**
-2. **MongoDB** (instalado y ejecutandose)
-   - MongoDB Community Server
-   - O MongoDB via Docker
+1. **Python 3.10+** (recomendado 3.10.11)
+2. **Git**
+3. (Opcional) **MongoDB** si deseas usar la capa de base de datos
 
-### Instalacion de MongoDB
+> Nota: en Windows se incluye un script `install.ps1` que automatiza parte de la configuración.
 
-#### Opcion 1: Instalacion Local (Windows)
+## Instalación rápida
 
-1. Descargar MongoDB Community Server desde [mongodb.com](https://www.mongodb.com/try/download/community)
-2. Instalar siguiendo el asistente
-3. Iniciar el servicio MongoDB:
-   ```powershell
-   net start MongoDB
-   ```
+### 1. Clonar el repositorio
 
-#### Opcion 2: Docker
-
-```bash
-docker pull mongo:latest
-docker run -d -p 27017:27017 --name mongodb mongo:latest
-```
-
-## Instalacion
-
-### 1. Clonar el Repositorio
-
-```bash
-git clone https://github.com/tu-usuario/breast-cancer-diagnosis-mlp-vs-svm.git
+```powershell
+git clone https://github.com/altairBASIC/breast-cancer-diagnosis-mlp-vs-svm.git
 cd breast-cancer-diagnosis-mlp-vs-svm
 ```
 
-### 2. Crear Entorno Virtual
+### 2. Crear y activar entorno virtual (Windows PowerShell)
 
 ```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+python -m venv .venv
+\.venv\Scripts\Activate.ps1
 ```
 
-### 3. Instalar Dependencias
+### 3. Instalar dependencias
 
 ```powershell
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
+
+### 4. (Opcional) Ejecutar script de instalación
+
+```powershell
+./install.ps1
+```
+
+Este script puede automatizar pasos como creación de directorios, descarga de datos y verificación del entorno (ver `INSTALLATION_GUIDE.md` para más detalles).
 
 ## Uso
 
-### Fase 1: Configuracion del Entorno
-
-#### Paso 1: Verificar el Entorno
+### 1. Preparación de datos (scripts)
 
 ```powershell
+# Verificar/recrear estructura básica
 python scripts/setup_environment.py
+
+# Descargar dataset y generar resumen en data/
+python scripts/download_dataset.py
+
+# Preprocesar datos y generar data/processed/
+python scripts/preprocessing.py
+
+# (Opcional) Cargar datos en MongoDB
+python scripts/load_to_mongo.py
 ```
 
-Este script verifica:
+Después de estos pasos deberías tener:
 
-- Versiones de las librerias instaladas
-- Conexion con MongoDB
-- Creacion de la base de datos
-- Estructura de directorios
+1. `data/breast_cancer.csv` con el dataset
+2. `data/data_summary.txt` con el resumen estadístico
+3. Archivos `.npy` y JSON dentro de `data/processed/` listos para modelado
+4. (Opcional) Base de datos `breast_cancer_db` en MongoDB con la colección `patients_records`
 
-#### Paso 2: Descargar el Dataset
+### 2. Trabajo exploratorio y entrenamiento (notebooks)
+
+Puedes reproducir el flujo de trabajo usando los notebooks en `notebooks/`:
+
+1. `01_data_preprocessing.ipynb`: limpieza, análisis exploratorio, generación de features
+2. `02_mlp_training.ipynb`: entrenamiento y evaluación del modelo MLP
+3. `03_svm_training.ipynb`: entrenamiento y evaluación del modelo SVM
+
+Cada notebook guarda resultados y, en algunos casos, reportes JSON en la carpeta `models/`.
+
+### 3. Aplicación web con Streamlit
+
+Con el entorno virtual activado desde la raíz del proyecto:
 
 ```powershell
-python scripts/download_dataset.py
+streamlit run app.py
 ```
 
-Este script:
+La aplicación permite:
 
-- Descarga el dataset desde UCI Repository
-- Genera un resumen estadistico
-- Guarda los archivos en el directorio `data/`
-
-#### Paso 3: Cargar Datos en MongoDB
-
+- Visualizar métricas de rendimiento de MLP y SVM
+- Consultar matrices de confusión y (cuando aplica) curvas ROC
+- Realizar predicciones interactivas introduciendo características de un caso
+- Ver resúmenes del dataset y, si existen, reportes JSON en `models/`
 ```powershell
 python scripts/load_to_mongo.py
 ```
@@ -174,7 +192,7 @@ Despues de ejecutar los scripts anteriores, deberia tener:
 3. Archivo `data/data_summary.txt` con el resumen estadistico
 4. Base de datos `breast_cancer_db` en MongoDB con la coleccion `patients_records`
 
-## Tecnologias Utilizadas
+## Tecnologías Utilizadas
 
 - **Python 3.x**: Lenguaje de programacion principal
 - **pandas**: Manipulacion y analisis de datos
@@ -197,18 +215,16 @@ joblib==1.3.2
 requests==2.31.0
 ```
 
-## Roadmap
+## Roadmap (resumen)
 
-### Semana 1-2: Fase de Datos y Entorno (Completado)
-
-- [X] Configuracion del entorno
-- [X] Descarga del dataset
-- [X] Carga de datos en MongoDB
-- [X] Generacion de resumenes estadisticos
-
-### Entrenamiento de Modelos
-
-Este proyecto es parte de un trabajo academico. Las sugerencias y mejoras son bienvenidas.
+- [X] Configuración del entorno
+- [X] Descarga y exploración del dataset
+- [X] Preprocesamiento y generación de `data/processed/`
+- [X] Entrenamiento de modelos MLP y SVM (notebooks)
+- [X] Generación de reportes de entrenamiento en `models/`
+- [X] Prototipo de aplicación web con Streamlit (`app.py`)
+- [ ] Extender comparación con más modelos
+- [ ] Integrar persistencia completa en MongoDB para modelos y predicciones
 
 ## Licencia
 

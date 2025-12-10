@@ -1,118 +1,221 @@
 # Guía de Instalación y Configuración
 ## Proyecto: Breast Cancer Diagnosis - MLP vs SVM
 
-### Estado Actual del Proyecto
-
-#### Completado:
-1. Entorno virtual creado correctamente en `/venv`
-2. Todas las dependencias instaladas:
-   - pandas 2.1.4
-   - numpy 1.26.2
-   - pymongo 4.6.1
-   - scikit-learn 1.3.2
-   - streamlit 1.29.0
-   - joblib 1.3.2
-   - requests 2.31.0
-
-3. Dataset descargado correctamente en `data/breast_cancer.csv`
-4. Resumen estadístico generado en `data/data_summary.txt`
-5. Estructura de directorios completa:
-   - /data
-   - /scripts
-   - /notebooks
-   - /models
-
-#### Pendiente:
-1. Instalación y configuración de MongoDB
-2. Ejecución del script de carga de datos a MongoDB
+Esta guía complementa al `README.md` y se centra en los pasos prácticos para dejar el entorno listo en una máquina Windows (PowerShell), incluyendo entorno virtual, dependencias, datos, scripts y, opcionalmente, MongoDB.
 
 ---
 
-## Pasos para Completar la Configuración
+## 1. Requisitos previos
 
-### 1. Instalar MongoDB
+- **Sistema operativo**: Windows 10/11
+- **Python**: 3.10+ (recomendado 3.10.11)
+- **Git** instalado y en el PATH
+- (Opcional) **MongoDB** si se usará la base de datos
 
-#### Opción A: Instalación Local en Windows
+---
+
+## 2. Clonar el repositorio
+
+```powershell
+git clone https://github.com/altairBASIC/breast-cancer-diagnosis-mlp-vs-svm.git
+cd breast-cancer-diagnosis-mlp-vs-svm
+```
+
+---
+
+## 3. Crear y activar entorno virtual
+
+Desde la carpeta raíz del proyecto:
+
+```powershell
+python -m venv .venv
+\.venv\Scripts\Activate.ps1
+```
+
+Verifica que el prompt de la terminal muestre `(.venv)` al inicio.
+
+Si PowerShell bloquea la ejecución de scripts:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+---
+
+## 4. Instalar dependencias
+
+Con el entorno virtual activado:
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Puedes verificar las librerías principales con:
+
+```powershell
+python -c "import pandas, numpy, sklearn, streamlit; print('Librerías clave instaladas')"
+```
+
+---
+
+## 5. Preparar datos
+
+El flujo típico usa los scripts en `scripts/`:
+
+1. **Configurar/verificar entorno base**
+
+   ```powershell
+   python scripts/setup_environment.py
+   ```
+
+   Este script crea carpetas necesarias, puede escribir `setup_log.txt` y valida versión de Python y paquetes.
+
+2. **Descargar dataset y generar resumen**
+
+   ```powershell
+   python scripts/download_dataset.py
+   ```
+
+   Al finalizar deberías tener:
+
+   - `data/breast_cancer.csv`
+   - `data/data_summary.txt`
+
+3. **Preprocesar datos y generar data/processed/**
+
+   ```powershell
+   python scripts/preprocessing.py
+   ```
+
+   Este script (según su implementación) genera típicamente:
+
+   - `data/processed/X_train.npy`
+   - `data/processed/X_test.npy`
+   - `data/processed/y_train.npy`
+   - `data/processed/y_test.npy`
+   - `data/processed/feature_info.json`
+   - `data/processed/preprocessing_report.json`
+
+---
+
+## 6. (Opcional) Instalar y configurar MongoDB
+
+La capa MongoDB es opcional; el proyecto funciona sin DB para entrenamiento y Streamlit. Solo es necesaria si quieres persistir registros en una base de datos.
+
+### 6.1 Instalación local en Windows
 
 1. Descargar MongoDB Community Server desde:
    https://www.mongodb.com/try/download/community
 
-2. Ejecutar el instalador y seguir las instrucciones
+2. Ejecutar el instalador y seguir las instrucciones.
 
 3. Iniciar el servicio MongoDB:
+
    ```powershell
    net start MongoDB
    ```
 
 4. Verificar que MongoDB está ejecutándose:
+
    ```powershell
    mongosh
    ```
 
-#### Opción B: Usar Docker (Recomendado)
+### 6.2 Usar Docker
 
-1. Asegúrate de tener Docker Desktop instalado
+1. Tener Docker Desktop instalado y corriendo.
+
+2. Levantar un contenedor de MongoDB:
 
 2. Ejecutar MongoDB en un contenedor:
    ```powershell
    docker run -d -p 27017:27017 --name mongodb-breast-cancer mongo:latest
    ```
 
-3. Verificar que el contenedor está ejecutándose:
+3. Verificar que el contenedor está activo:
+
    ```powershell
    docker ps
    ```
 
-### 2. Ejecutar Scripts de Configuración
+### 6.3 Cargar datos en MongoDB
 
-Una vez MongoDB esté instalado y ejecutándose:
+Con MongoDB ejecutándose y el entorno virtual activo:
 
-#### Paso 1: Activar el entorno virtual (si no está activado)
-```powershell
-cd "c:\Users\ignac\vscode projects\breast-cancer-diagnosis-mlp-vs-svm"
-.\venv\Scripts\Activate.ps1
-```
-
-#### Paso 2: Verificar el entorno
-```powershell
-python scripts/setup_environment.py
-```
-
-Este script verificará:
-- Versiones de librerías instaladas
-- Conexión con MongoDB
-- Creación de la base de datos `breast_cancer_db`
-
-#### Paso 3: Cargar datos en MongoDB
 ```powershell
 python scripts/load_to_mongo.py
 ```
 
-Este script:
-- Conectará con MongoDB
-- Creará la colección `patients_records`
-- Insertará los 569 registros del dataset
-- Verificará la inserción correcta
+Este script, según la configuración interna, suele:
+
+- Conectarse a MongoDB
+- Crear la base de datos `breast_cancer_db`
+- Crear la colección `patients_records`
+- Insertar los registros del dataset
+
+Puedes verificar rápidamente en MongoDB:
+
+```powershell
+mongosh --eval "use breast_cancer_db; show collections; db.patients_records.countDocuments()"
+```
 
 ---
 
-## Verificación del Entorno
+## 7. Ejecutar notebooks (opcional pero recomendado)
 
-### Comando Rápido para Verificar Todo:
+Para reproducir el análisis paso a paso, abre los notebooks en `notebooks/` desde VS Code o Jupyter:
+
+1. `01_data_preprocessing.ipynb`
+2. `02_mlp_training.ipynb`
+3. `03_svm_training.ipynb`
+
+Asegúrate de seleccionar como kernel el Python de `.venv`.
+
+---
+
+## 8. Ejecutar la aplicación Streamlit
+
+Desde la raíz del proyecto, con el entorno virtual activado:
+
 ```powershell
-python -c "import pandas, numpy, pymongo, sklearn, streamlit, joblib, requests; print('Todas las librerias instaladas correctamente')"
+streamlit run app.py
 ```
 
-### Verificar Dataset:
+El comando mostrará en la terminal la URL local (por ejemplo `http://localhost:8501`) para abrir la app en el navegador.
+
+La app utiliza, cuando existen, los datos de `data/processed/`; si no, puede recurrir al CSV o incluso al dataset de sklearn como respaldo.
+
+---
+
+## 9. Verificación rápida del entorno
+
+### 9.1 Verificar Python y entorno virtual
+
+```powershell
+python --version
+where python
+```
+
+Debe apuntar al ejecutable dentro de `.venv`.
+
+### 9.2 Verificar datos
+
 ```powershell
 dir data
+dir data\processed
 ```
 
-Deberías ver:
-- `breast_cancer.csv` (dataset completo)
-- `data_summary.txt` (resumen estadístico)
+Deberías ver al menos `breast_cancer.csv`, `data_summary.txt` y los `.npy`/JSON de `processed/` si corriste el preprocesamiento.
 
-### Verificar MongoDB:
+### 9.3 Verificar dependencias
+
+```powershell
+pip list
+```
+
+Y, si usas MongoDB:
+
 ```powershell
 mongosh --eval "db.version()"
 ```
@@ -226,32 +329,26 @@ Una vez completada la configuración, estarás listo para:
 
 ```powershell
 # Activar entorno virtual
-.\venv\Scripts\Activate.ps1
+\.venv\Scripts\Activate.ps1
 
 # Desactivar entorno virtual
 deactivate
 
-# Listar paquetes instalados
-pip list
+# Instalar dependencias
+python -m pip install -r requirements.txt
 
-# Verificar Python
-python --version
+# Ejecutar scripts principales
+python scripts/setup_environment.py
+python scripts/download_dataset.py
+python scripts/preprocessing.py
+python scripts/load_to_mongo.py   # opcional
 
-# Verificar MongoDB
-mongosh --version
-
-# Ver bases de datos en MongoDB
-mongosh --eval "show dbs"
-
-# Ver colecciones en breast_cancer_db
-mongosh --eval "use breast_cancer_db; show collections"
-
-# Contar documentos en patients_records
-mongosh --eval "use breast_cancer_db; db.patients_records.countDocuments()"
+# Lanzar app Streamlit
+streamlit run app.py
 ```
 
 ---
 
-**Fecha de creación:** 24 de octubre de 2025
-**Autor:** Ignacio
+**Fecha de última actualización:** 9 de diciembre de 2025  
+**Autores:** Ignacio Ramírez, Cristián Vergara, Antonia Montecinos  
 **Proyecto:** Breast Cancer Diagnosis - MLP vs SVM
