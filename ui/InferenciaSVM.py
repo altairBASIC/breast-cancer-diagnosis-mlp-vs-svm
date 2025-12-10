@@ -130,7 +130,7 @@ def mostrar():
 
             nuevo_registro = {
                 "Fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "Diagnostico": resultado_texto,
+                "Diagnóstico": resultado_texto,
                 "Confianza": confianza_str, # Ya se guarda como "99.45%"
             }
             # Agregar también los valores de entrada al registro

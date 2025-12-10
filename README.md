@@ -74,13 +74,13 @@ breast-cancer-diagnosis-mlp-vs-svm/
 
 **Fuente:** [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic)
 
-**Caracteristicas:**
+**Características:**
 
 - 569 instancias
-- 30 caracteristicas numericas
+- 30 características numéricas
 - 2 clases: Maligno (M) y Benigno (B)
 
-**Atributos:** El dataset contiene mediciones computadas de imagenes digitalizadas de aspiracion con aguja fina (FNA) de masas mamarias, describiendo caracteristicas de los nucleos celulares presentes en la imagen.
+**Atributos:** El dataset contiene mediciones computadas de imágenes digitalizadas de aspiración con aguja fina (FNA) de masas mamarias, describiendo características de los núcleos celulares presentes en la imagen.
 
 ## Requisitos Previos
 
@@ -179,29 +179,29 @@ python scripts/load_to_mongo.py
 Este script:
 
 - Conecta con MongoDB
-- Crea la coleccion `patients_records`
+- Crea la colección `patients_records`
 - Inserta todos los registros del dataset
-- Verifica la insercion correcta
+- Verifica la inserción correcta
 
-### Verificacion de la Instalacion
+### Verificación de la instalación
 
-Despues de ejecutar los scripts anteriores, deberia tener:
+Después de ejecutar los scripts anteriores, deberías tener:
 
 1. Archivo `setup_log.txt` con el registro de todas las operaciones
 2. Archivo `data/breast_cancer_data.csv` con el dataset
-3. Archivo `data/data_summary.txt` con el resumen estadistico
-4. Base de datos `breast_cancer_db` en MongoDB con la coleccion `patients_records`
+3. Archivo `data/data_summary.txt` con el resumen estadístico
+4. Base de datos `breast_cancer_db` en MongoDB con la colección `patients_records`
 
 ## Tecnologías Utilizadas
 
-- **Python 3.x**: Lenguaje de programacion principal
-- **pandas**: Manipulacion y analisis de datos
-- **NumPy**: Operaciones numericas
+- **Python 3.x**: Lenguaje de programación principal
+- **pandas**: Manipulación y análisis de datos
+- **NumPy**: Operaciones numéricas
 - **scikit-learn**: Algoritmos de Machine Learning
 - **MongoDB**: Base de datos NoSQL
 - **PyMongo**: Driver de Python para MongoDB
 - **Streamlit**: Framework para aplicaciones web interactivas
-- **joblib**: Serializacion de modelos
+- **joblib**: Serialización de modelos
 
 ## Dependencias
 

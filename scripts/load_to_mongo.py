@@ -33,7 +33,7 @@ def connect_to_mongo(host="localhost", port=27017, timeout=5000):
         MongoClient: Cliente de MongoDB si la conexión es exitosa, None en caso contrario
     """
     log_message("="*70)
-    log_message("CONEXION A MONGODB")
+        log_message("CONEXIÓN A MONGODB")
     log_message("="*70)
     
     try:
@@ -43,18 +43,18 @@ def connect_to_mongo(host="localhost", port=27017, timeout=5000):
         
         # Verificar la conexión
         client.admin.command('ping')
-        log_message(f"[OK] Conexion establecida con MongoDB en {host}:{port}")
+            log_message(f"[OK] Conexión establecida con MongoDB en {host}:{port}")
         
         # Obtener información del servidor
         server_info = client.server_info()
-        log_message(f"[OK] MongoDB version: {server_info['version']}")
+            log_message(f"[OK] Versión de MongoDB: {server_info['version']}")
         log_message("")
         
         return client
         
     except (ConnectionFailure, ServerSelectionTimeoutError) as e:
         log_message(f"[ERROR] No se pudo conectar a MongoDB: {str(e)}")
-        log_message("[INFO] Asegurese de que MongoDB este instalado y ejecutandose")
+            log_message("[INFO] Asegúrese de que MongoDB esté instalado y ejecutándose")
         log_message("[INFO] Para iniciar MongoDB: mongod")
         log_message("")
         return None
@@ -82,7 +82,7 @@ def load_dataset_to_mongo(csv_path, client, db_name="breast_cancer_db", collecti
     log_message("="*70)
     
     if client is None:
-        log_message("[ERROR] No hay conexion activa con MongoDB")
+            log_message("[ERROR] No hay conexión activa con MongoDB")
         log_message("")
         return 0, None
     
@@ -90,29 +90,29 @@ def load_dataset_to_mongo(csv_path, client, db_name="breast_cancer_db", collecti
         # Cargar el dataset
         log_message(f"[INFO] Cargando dataset desde: {csv_path}")
         df = pd.read_csv(csv_path)
-        log_message(f"[OK] Dataset cargado: {df.shape[0]} registros, {df.shape[1]} columnas")
+            log_message(f"[OK] Dataset cargado: {df.shape[0]} registros, {df.shape[1]} columnas")
         
         # Seleccionar base de datos
         db = client[db_name]
-        log_message(f"[OK] Base de datos '{db_name}' seleccionada")
+            log_message(f"[OK] Base de datos '{db_name}' seleccionada")
         
         # Verificar si la colección ya existe
         if collection_name in db.list_collection_names():
-            log_message(f"[WARNING] La coleccion '{collection_name}' ya existe")
+                log_message(f"[WARNING] La colección '{collection_name}' ya existe")
             response = input("Desea eliminar la coleccion existente y crear una nueva? (s/n): ")
             if response.lower() == 's':
                 db[collection_name].drop()
-                log_message(f"[OK] Coleccion '{collection_name}' eliminada")
+                    log_message(f"[OK] Colección '{collection_name}' eliminada")
             else:
-                log_message("[INFO] Operacion cancelada por el usuario")
+                    log_message("[INFO] Operación cancelada por el usuario")
                 return 0, df
         
         # Seleccionar colección
         collection = db[collection_name]
-        log_message(f"[OK] Coleccion '{collection_name}' creada/seleccionada")
+            log_message(f"[OK] Colección '{collection_name}' creada/seleccionada")
         
         # Convertir DataFrame a lista de diccionarios
-        log_message("[INFO] Preparando documentos para insercion...")
+            log_message("[INFO] Preparando documentos para inserción...")
         records = df.to_dict('records')
         
         # Agregar metadatos a cada documento
@@ -126,13 +126,13 @@ def load_dataset_to_mongo(csv_path, client, db_name="breast_cancer_db", collecti
         result = collection.insert_many(records)
         inserted_count = len(result.inserted_ids)
         
-        log_message(f"[OK] {inserted_count} documentos insertados exitosamente")
+            log_message(f"[OK] {inserted_count} documentos insertados exitosamente")
         log_message("")
         
         return inserted_count, df
         
     except FileNotFoundError:
-        log_message(f"[ERROR] Archivo no encontrado: {csv_path}")
+            log_message(f"[ERROR] Archivo no encontrado: {csv_path}")
         log_message("[INFO] Ejecute primero el script download_dataset.py")
         log_message("")
         return 0, None
@@ -156,11 +156,11 @@ def verify_inserted_documents(client, db_name="breast_cancer_db", collection_nam
         bool: True si la verificación es exitosa, False en caso contrario
     """
     log_message("="*70)
-    log_message("VERIFICACION DE DOCUMENTOS INSERTADOS")
+    log_message("VERIFICACIÓN DE DOCUMENTOS INSERTADOS")
     log_message("="*70)
     
     if client is None:
-        log_message("[ERROR] No hay conexion activa con MongoDB")
+            log_message("[ERROR] No hay conexión activa con MongoDB")
         log_message("")
         return False
     
@@ -171,7 +171,7 @@ def verify_inserted_documents(client, db_name="breast_cancer_db", collection_nam
         
         # Contar documentos
         document_count = collection.count_documents({})
-        log_message(f"[INFO] Numero de documentos en la coleccion: {document_count}")
+            log_message(f"[INFO] Número de documentos en la colección: {document_count}")
         
         # Verificar contra el número esperado
         if expected_count is not None:
@@ -185,8 +185,8 @@ def verify_inserted_documents(client, db_name="breast_cancer_db", collection_nam
         malignant_count = collection.count_documents({"diagnosis": "M"})
         benign_count = collection.count_documents({"diagnosis": "B"})
         
-        log_message(f"[INFO] Casos Malignos (M): {malignant_count}")
-        log_message(f"[INFO] Casos Benignos (B): {benign_count}")
+            log_message(f"[INFO] Casos malignos (M): {malignant_count}")
+            log_message(f"[INFO] Casos benignos (B): {benign_count}")
         log_message(f"[INFO] Total: {malignant_count + benign_count}")
         
         # Mostrar un documento de ejemplo
@@ -200,7 +200,7 @@ def verify_inserted_documents(client, db_name="breast_cancer_db", collection_nam
             log_message(f"[INFO] Radio medio: {sample_doc.get('radius_mean', 'N/A')}")
         
         log_message("")
-        log_message("[OK] Verificacion completada exitosamente")
+            log_message("[OK] Verificación completada exitosamente")
         log_message("")
         
         return True
@@ -224,11 +224,11 @@ def validate_collection_exists(client, db_name="breast_cancer_db", collection_na
         bool: True si la colección existe, False en caso contrario
     """
     log_message("="*70)
-    log_message("VALIDACION DE COLECCION")
+    log_message("VALIDACIÓN DE COLECCIÓN")
     log_message("="*70)
     
     if client is None:
-        log_message("[ERROR] No hay conexion activa con MongoDB")
+            log_message("[ERROR] No hay conexión activa con MongoDB")
         log_message("")
         return False
     
@@ -237,12 +237,12 @@ def validate_collection_exists(client, db_name="breast_cancer_db", collection_na
         collections = db.list_collection_names()
         
         if collection_name in collections:
-            log_message(f"[OK] La coleccion '{collection_name}' existe en la base de datos '{db_name}'")
+                log_message(f"[OK] La colección '{collection_name}' existe en la base de datos '{db_name}'")
             log_message(f"[INFO] Colecciones disponibles: {', '.join(collections)}")
             log_message("")
             return True
         else:
-            log_message(f"[ERROR] La coleccion '{collection_name}' NO existe en la base de datos '{db_name}'")
+                log_message(f"[ERROR] La colección '{collection_name}' NO existe en la base de datos '{db_name}'")
             log_message(f"[INFO] Colecciones disponibles: {', '.join(collections)}")
             log_message("")
             return False
@@ -268,7 +268,7 @@ def main():
     client = connect_to_mongo()
     
     if client is None:
-        log_message("[ERROR] No se pudo establecer conexion con MongoDB. Proceso abortado.")
+            log_message("[ERROR] No se pudo establecer conexión con MongoDB. Proceso abortado.")
         log_message("")
         sys.exit(1)
     
@@ -293,9 +293,9 @@ def main():
         log_message("="*70)
         
         if verification_ok and collection_exists:
-            log_message("[OK] Proceso completado exitosamente")
+            log_message(f"[OK] Proceso completado exitosamente")
             log_message(f"[OK] Base de datos: breast_cancer_db")
-            log_message(f"[OK] Coleccion: patients_records")
+            log_message(f"[OK] Colección: patients_records")
             log_message(f"[OK] Documentos insertados: {inserted_count}")
             log_message("[OK] Sistema listo para entrenar modelos")
         else:
@@ -310,7 +310,7 @@ def main():
     finally:
         # Cerrar conexión
         client.close()
-        log_message("[INFO] Conexion con MongoDB cerrada")
+            log_message("[INFO] Conexión con MongoDB cerrada")
 
 
 if __name__ == "__main__":

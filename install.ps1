@@ -3,7 +3,7 @@
 # Ejecutar este script para configurar todo el entorno
 
 Write-Host "=================================================================================" -ForegroundColor Cyan
-Write-Host "INSTALACION AUTOMATIZADA - BREAST CANCER DIAGNOSIS PROJECT" -ForegroundColor Cyan
+Write-Host "INSTALACIÓN AUTOMATIZADA - BREAST CANCER DIAGNOSIS PROJECT" -ForegroundColor Cyan
 Write-Host "=================================================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -90,7 +90,7 @@ if (-Not $mongoRunning) {
     Write-Host "  2. Ejecutar MongoDB con Docker:" -ForegroundColor Yellow
     Write-Host "     docker run -d -p 27017:27017 --name mongodb mongo:latest" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "Despues de instalar MongoDB, ejecuta:" -ForegroundColor Yellow
+    Write-Host "Después de instalar MongoDB, ejecuta:" -ForegroundColor Yellow
     Write-Host "     python scripts/setup_environment.py" -ForegroundColor Cyan
     Write-Host "     python scripts/load_to_mongo.py" -ForegroundColor Cyan
     Write-Host ""
@@ -120,7 +120,7 @@ if ($mongoRunning) {
 # Resumen Final
 Write-Host ""
 Write-Host "=================================================================================" -ForegroundColor Cyan
-Write-Host "RESUMEN DE LA INSTALACION" -ForegroundColor Cyan
+Write-Host "RESUMEN DE LA INSTALACIÓN" -ForegroundColor Cyan
 Write-Host "=================================================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -144,7 +144,7 @@ if (Test-Path "setup_log.txt") {
 }
 Write-Host ""
 
-Write-Host "Proximos pasos:" -ForegroundColor Yellow
+Write-Host "Próximos pasos:" -ForegroundColor Yellow
 if (-Not $mongoRunning) {
     Write-Host "  1. Instalar MongoDB" -ForegroundColor White
     Write-Host "  2. Ejecutar: python scripts/setup_environment.py" -ForegroundColor White
@@ -157,5 +157,5 @@ if (-Not $mongoRunning) {
 Write-Host ""
 
 Write-Host "=================================================================================" -ForegroundColor Cyan
-Write-Host "INSTALACION COMPLETADA" -ForegroundColor Cyan
+Write-Host "INSTALACIÓN COMPLETADA" -ForegroundColor Cyan
 Write-Host "=================================================================================" -ForegroundColor Cyan

@@ -15,8 +15,8 @@ def _get_historial_svm() -> pd.DataFrame:
         return pd.DataFrame()
     df = pd.DataFrame(data)
     # Normalizar posible nombre de columna de diagnóstico
-    if "Diagnóstico" in df.columns and "Diagnostico" not in df.columns:
-        df = df.rename(columns={"Diagnóstico": "Diagnostico"})
+    if "Diagnostico" in df.columns and "Diagnóstico" not in df.columns:
+        df = df.rename(columns={"Diagnostico": "Diagnóstico"})
     return df
 
 
@@ -77,8 +77,8 @@ def mostrar() -> None:
     # --- Distribución Benigno/Maligno por modelo ---
     rows = []
 
-    if not df_svm.empty and "Diagnostico" in df_svm.columns:
-        for diag, count in df_svm["Diagnostico"].value_counts().items():
+    if not df_svm.empty and "Diagnóstico" in df_svm.columns:
+        for diag, count in df_svm["Diagnóstico"].value_counts().items():
             rows.append({"Modelo": "SVM", "Diagnóstico": str(diag), "Cantidad": int(count)})
 
     if not df_mlp.empty:
