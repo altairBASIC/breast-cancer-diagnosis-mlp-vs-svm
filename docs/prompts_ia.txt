@@ -1,0 +1,125 @@
+Este archivo contiene ejemplos aproximados de prompts de IA
+que podrían haberse utilizado durante el desarrollo de este proyecto,
+especialmente para la aplicación Streamlit y la documentación.
+
+No son transcripciones exactas, sino reconstrucciones coherentes con el
+resultado final
+
+[Prompt 1]
+"Necesito un script de preprocesamiento en Python para el dataset
+ Breast Cancer Wisconsin (Diagnostic). Debe:
+ - Cargar los datos desde MongoDB (colección `patients_records`).
+ - Hacer un análisis exploratorio básico (EDA) con prints en consola.
+ - Limpiar columnas irrelevantes, manejar duplicados y valores nulos.
+ - Codificar la variable `diagnosis` como 0 (Benigno) y 1 (Maligno).
+ - Dividir en train/test con stratify (80/20).
+ - Normalizar características numéricas con StandardScaler.
+ - Guardar los arrays numpy y un JSON con metadatos de las features.
+ Todo en una clase tipo `DataPreprocessor`, con métodos claros." 
+
+[Prompt 2]
+"Ayúdame a escribir un notebook de preprocesamiento de datos para el
+ mismo proyecto. Debe seguir, paso a paso:
+ 1. Importar librerías y configurar estilos de gráficos.
+ 2. Conectarse a MongoDB y leer la colección `patients_records`.
+ 3. Hacer EDA: dimensiones, tipos de datos, valores faltantes,
+    distribución de `diagnosis`, estadísticas descriptivas.
+ 4. Limpiar datos (columnas auxiliares, duplicados, nulos).
+ 5. Codificar la variable objetivo con LabelEncoder.
+ 6. Dividir en train/test y aplicar StandardScaler.
+ 7. Guardar datos procesados y un reporte JSON de preprocesamiento.
+ Usa comentarios y prints claros en español." 
+
+[Prompt 3]
+"Necesito un script/notebook en Python para entrenar un modelo SVM
+sobre el dataset de cáncer de mama ya preprocesado (X_train.npy,
+X_test.npy, y_train.npy, y_test.npy). Debe:
+ - Cargar los arrays desde `data/processed/`.
+ - Entrenar una SVM (por ejemplo con kernel RBF).
+ - Calcular métricas: accuracy, precision, recall, F1, AUC.
+ - Construir la matriz de confusión (TP, TN, FP, FN).
+ - Guardar un reporte JSON con todas las métricas y la matriz.
+ - Guardar el modelo entrenado con joblib en `models/svm_model.pkl`.
+Incluye funciones auxiliares para reutilizar en la app Streamlit." 
+
+[Prompt 4]
+"Ayúdame a comparar el rendimiento entre un modelo MLP y un modelo SVM
+usando sus reportes JSON (`mlp_training_report.json` y
+`svm_training_report.json`). Quiero:
+ - Leer ambos archivos JSON.
+ - Extraer accuracy, recall, precision, f1_score y AUC.
+ - Crear un DataFrame comparativo con pandas.
+ - Generar un gráfico de barras con matplotlib que muestre SVM vs MLP.
+ - Imprimir un pequeño resumen textual indicando qué modelo gana en
+   exactitud y en sensibilidad.
+El código debe estar pensado para integrarse en una vista de Streamlit." 
+
+[Prompt 5]
+"Diseña una función en Python que, dado el reporte JSON de un modelo,
+construya una curva de aprendizaje (learning curve) usando los valores
+ya calculados. Si el JSON trae `train_sizes`, `train_scores` y
+`test_scores`, genera una figura matplotlib con título, leyenda y ejes
+etiquetados en español. Esta función se usará en la página de análisis
+SVM de Streamlit." 
+
+[Prompt 6]
+"Genera el contenido para una página de Streamlit llamada
+`Explorador de Datos` que muestre:
+ - Un resumen del dataset (número de filas y columnas).
+ - Una tabla con las primeras filas.
+ - Un gráfico de distribución de la variable `diagnosis`.
+ - Estadísticas descriptivas en otra sección.
+ - Un botón para descargar el dataset como CSV.
+El estilo debe ser informativo y usar tooltips o textos de ayuda
+cuando sea necesario." 
+
+[Prompt 7]
+"Ayúdame a crear dos vistas en Streamlit: `MLP (análisis)` y
+`SVM (análisis)`. Cada una debe incluir:
+ - Un bloque de métricas (accuracy, recall, precision, f1-score).
+ - Matrices de confusión (train y test) con gráficos claros.
+ - Una curva de aprendizaje.
+ - Textos cortos explicando cómo interpretar cada gráfico.
+El código debe estar organizado en funciones `mostrar()` dentro de
+módulos separados en la carpeta `ui/`." 
+
+[Prompt 8]
+"Quiero una página de `Probador de Casos` para MLP y otra para SVM en
+Streamlit. La idea es:
+ - Mostrar inputs numéricos para las 30 características del dataset
+   (ya normalizadas).
+ - Incluir un botón para cargar valores de ejemplo aleatorios.
+ - Al presionar `Analizar`, mostrar:
+   - Un icono verde o rojo según el diagnóstico.
+   - El texto BENIGNO o MALIGNO con un pequeño texto explicativo.
+   - Una barra o métrica de 'confianza' (% de probabilidad).
+ - Guardar el historial de consultas en una tabla descargable como CSV.
+Escribe el contenido en español y con un tono respetuoso hacia el
+contexto médico." 
+
+[Prompt 9]
+"Ayúdame a redactar una narrativa para `docs/narrativa.md` que
+explique:
+ - El contexto y motivación del proyecto (cáncer de mama).
+ - Una descripción más detallada del dataset Breast Cancer Wisconsin.
+ - Los conceptos de MLP y SVM con ejemplos intuitivos.
+ - Las métricas de evaluación usadas (accuracy, recall, etc.).
+ - Cómo se usa la aplicación Streamlit para explorar y hacer inferencia.
+Todo en español, con secciones y subtítulos claros." 
+
+[Prompt 10]
+"Genera un documento `responsabilidades.md` donde se detallen las
+contribuciones principales de cada uno de los tres autores del proyecto,
+clasificadas por áreas (datos, modelos, interfaz, documentación,
+coordinación). El tono debe ser académico y claro." 
+
+[Prompt 11]
+"Revisa este README.md y sugiere mejoras de claridad y ortografía en
+español, manteniendo el contenido técnico." 
+
+[Prompt 12]
+"Sugiere cómo organizar la navegación de una app Streamlit que tiene
+estas páginas: Inicio, Explorador de Datos, MLP (análisis),
+MLP (probador), SVM (análisis), SVM (probador), Comparación y
+Analítica Web. Usa un diccionario `PAGES` con claves en español y
+funciones `mostrar()` importadas desde un paquete `ui`." 
