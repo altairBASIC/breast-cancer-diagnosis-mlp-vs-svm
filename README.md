@@ -172,6 +172,7 @@ La aplicación permite:
 - Consultar matrices de confusión y (cuando aplica) curvas ROC
 - Realizar predicciones interactivas introduciendo características de un caso
 - Ver resúmenes del dataset y, si existen, reportes JSON en `models/`
+
 ```powershell
 python scripts/load_to_mongo.py
 ```
@@ -223,19 +224,19 @@ requests==2.31.0
 - [X] Entrenamiento de modelos MLP y SVM (notebooks)
 - [X] Generación de reportes de entrenamiento en `models/`
 - [X] Prototipo de aplicación web con Streamlit (`app.py`)
-- [ ] Extender comparación con más modelos
-- [ ] Integrar persistencia completa en MongoDB para modelos y predicciones
 
 ## Licencia
 
 Este proyecto se proporciona con fines educativos.
 
 ## Autores
+
 Ignacio Ramírez
 Cristián Vergara
 Antonia Montecinos
 
 ## Referencias
+
 Dataset utilizado:
 Dua, D. & Graff, C. (2019).
 UCI Machine Learning Repository: Breast Cancer Wisconsin (Diagnostic) Data Set.
