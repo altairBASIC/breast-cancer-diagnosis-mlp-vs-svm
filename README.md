@@ -225,6 +225,11 @@ requests==2.31.0
 - [X] Generación de reportes de entrenamiento en `models/`
 - [X] Prototipo de aplicación web con Streamlit (`app.py`)
 
+## Documentación adicional
+
+- Guía paso a paso de instalación y configuración: `docs/instrucciones.md`  
+- Narrativa detallada del proyecto, dataset y conceptos: `docs/narrativa.md`
+
 ## Licencia
 
 Este proyecto se proporciona con fines educativos.

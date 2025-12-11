@@ -3,6 +3,15 @@
 
 Esta guía complementa al `README.md` y se centra en los pasos prácticos para dejar el entorno listo en una máquina Windows (PowerShell), incluyendo entorno virtual, dependencias, datos, scripts y, opcionalmente, MongoDB.
 
+### Resumen rápido de pasos
+
+1. Clonar el repositorio.
+2. Crear y activar el entorno virtual `.venv`.
+3. Instalar dependencias desde `requirements.txt`.
+4. Ejecutar los scripts de `scripts/` para preparar los datos.
+5. (Opcional) Instalar y configurar MongoDB.
+6. Ejecutar los notebooks o lanzar la app con `streamlit run app.py`.
+
 ---
 
 ## 1. Requisitos previos
@@ -126,8 +135,6 @@ La capa MongoDB es opcional; el proyecto funciona sin DB para entrenamiento y St
 
 1. Tener Docker Desktop instalado y corriendo.
 
-2. Levantar un contenedor de MongoDB:
-
 2. Ejecutar MongoDB en un contenedor:
    ```powershell
    docker run -d -p 27017:27017 --name mongodb-breast-cancer mongo:latest
@@ -247,14 +254,14 @@ Contiene:
 
 ```
 breast-cancer-diagnosis-mlp-vs-svm/
-├── venv/                              [COMPLETADO]
+├── .venv/                             [COMPLETADO]
 ├── data/
 │   ├── breast_cancer.csv              [COMPLETADO]
 │   └── data_summary.txt               [COMPLETADO]
 ├── scripts/
 │   ├── setup_environment.py           [COMPLETADO]
 │   ├── download_dataset.py            [COMPLETADO]
-│   └── load_to_mongo.py              [COMPLETADO]
+│   └── load_to_mongo.py               [COMPLETADO]
 ├── notebooks/                         [COMPLETADO]
 ├── models/                            [COMPLETADO]
 ├── requirements.txt                   [COMPLETADO]
