@@ -1,4 +1,5 @@
 # Guía de Instalación y Configuración
+
 ## Proyecto: Breast Cancer Diagnosis - MLP vs SVM
 
 Esta guía complementa al `README.md` y se centra en los pasos prácticos para dejar el entorno listo en una máquina Windows (PowerShell), incluyendo entorno virtual, dependencias, datos, scripts y, opcionalmente, MongoDB.
@@ -79,7 +80,6 @@ El flujo típico usa los scripts en `scripts/`:
    ```
 
    Este script crea carpetas necesarias, puede escribir `setup_log.txt` y valida versión de Python y paquetes.
-
 2. **Descargar dataset y generar resumen**
 
    ```powershell
@@ -90,7 +90,6 @@ El flujo típico usa los scripts en `scripts/`:
 
    - `data/breast_cancer.csv`
    - `data/data_summary.txt`
-
 3. **Preprocesar datos y generar data/processed/**
 
    ```powershell
@@ -116,15 +115,12 @@ La capa MongoDB es opcional; el proyecto funciona sin DB para entrenamiento y St
 
 1. Descargar MongoDB Community Server desde:
    https://www.mongodb.com/try/download/community
-
 2. Ejecutar el instalador y seguir las instrucciones.
-
 3. Iniciar el servicio MongoDB:
 
    ```powershell
    net start MongoDB
    ```
-
 4. Verificar que MongoDB está ejecutándose:
 
    ```powershell
@@ -134,12 +130,11 @@ La capa MongoDB es opcional; el proyecto funciona sin DB para entrenamiento y St
 ### 6.2 Usar Docker
 
 1. Tener Docker Desktop instalado y corriendo.
-
 2. Ejecutar MongoDB en un contenedor:
+
    ```powershell
    docker run -d -p 27017:27017 --name mongodb-breast-cancer mongo:latest
    ```
-
 3. Verificar que el contenedor está activo:
 
    ```powershell
@@ -151,6 +146,7 @@ La capa MongoDB es opcional; el proyecto funciona sin DB para entrenamiento y St
 Con MongoDB ejecutándose y el entorno virtual activo:
 
 #### Paso 1: Activar el entorno virtual (si no está activado)
+
 ```powershell
 python scripts/load_to_mongo.py
 ```
@@ -233,14 +229,18 @@ mongosh --eval "db.version()"
 ## Archivos Generados
 
 ### setup_log.txt
+
 Contiene el registro detallado de:
+
 - Verificación de librerías
 - Intentos de conexión a MongoDB
 - Creación de base de datos
 - Resultados de todas las operaciones
 
 ### data/data_summary.txt
+
 Contiene:
+
 - Información básica del dataset (569 registros, 30 características)
 - Tipos de datos de cada columna
 - Valores faltantes (ninguno)
@@ -250,23 +250,68 @@ Contiene:
 
 ---
 
-## Estructura Final Esperada
+## Estructura Final
 
 ```
 breast-cancer-diagnosis-mlp-vs-svm/
-├── .venv/                             [COMPLETADO]
-├── data/
-│   ├── breast_cancer.csv              [COMPLETADO]
-│   └── data_summary.txt               [COMPLETADO]
-├── scripts/
-│   ├── setup_environment.py           [COMPLETADO]
-│   ├── download_dataset.py            [COMPLETADO]
-│   └── load_to_mongo.py               [COMPLETADO]
-├── notebooks/                         [COMPLETADO]
-├── models/                            [COMPLETADO]
-├── requirements.txt                   [COMPLETADO]
-├── setup_log.txt                      [GENERADO AL EJECUTAR]
-└── README.md                          [COMPLETADO]
+│
+├── app.py                         # Aplicación Streamlit principal con dashboard comparativo
+├── install.ps1                    # Script de instalación automatizado (Windows)
+├── requirements.txt               # Dependencias del proyecto
+├── README.md                      # Documentación del proyecto
+├── setup_log.txt                  # Log de configuración y ejecución
+│
+├── data/                          # Dataset y archivos de datos
+│   ├── breast_cancer.csv          # Dataset descargado de UCI ML Repository
+│   ├── data_summary.txt           # Resumen estadístico del dataset
+│   └── processed/                 # Datos preprocesados (escalados y divididos)
+│       ├── X_train.npy            # Features de entrenamiento (455 muestras)
+│       ├── X_test.npy             # Features de prueba (114 muestras)
+│       ├── y_train.npy            # Etiquetas de entrenamiento
+│       ├── y_test.npy             # Etiquetas de prueba
+│       ├── train_data.csv         # Datos de entrenamiento en formato CSV
+│       ├── test_data.csv          # Datos de prueba en formato CSV (usado por app.py)
+│       ├── feature_info.json      # Nombres y metadata de las 30 características
+│       └── preprocessing_report.json  # Reporte completo del preprocesamiento
+│
+├── docs/                          # Documentación del proyecto
+│   ├── instrucciones.md
+│   ├── narrativa.md
+│   ├── prompts_ia.txt
+│   └── responsabilidades.md
+│
+├── models/                        # Modelos entrenados y reportes
+│   ├── mlp_model.pkl              # Modelo MLP entrenado (AUC 0.995)
+│   ├── svm_model.pkl              # Modelo SVM entrenado (AUC 0.995)
+│   ├── mlp_training_report.json   # Métricas detalladas del MLP
+│   ├── svm_training_report.json   # Métricas detalladas del SVM
+│   └── scalers/                   # Objetos de preprocesamiento
+│       ├── standard_scaler.pkl    # StandardScaler ajustado
+│       └── label_encoder.pkl      # LabelEncoder (B→0, M→1)
+│
+├── notebooks/                     # Jupyter notebooks para desarrollo
+│   ├── 01_data_preprocessing.ipynb
+│   ├── 02_mlp_training.ipynb
+│   └── 03_svm_training.ipynb
+│
+├── scripts/                       # Scripts de Python para el pipeline
+│   ├── setup_environment.py       # Configuración y verificación del entorno
+│   ├── download_dataset.py        # Descarga del dataset desde UCI
+│   ├── preprocessing.py           # Pipeline completo de preprocesamiento
+│   ├── train_models.py            # Entrenamiento de MLP y SVM
+│   └── load_to_mongo.py           # Carga de datos a MongoDB
+│
+└── ui/                            # Recursos para la interfaz de usuario
+    ├── __init__.py
+    ├── AnaliticaWeb.py
+    ├── common_features.py
+    ├── comparacion.py
+    ├── Dataset.py
+    ├── inferenciaMLP.py
+    ├── InferenciaSVM.py
+    ├── inicio.py
+    ├── MLP.py
+    └── SVM.py
 ```
 
 ---
@@ -274,9 +319,11 @@ breast-cancer-diagnosis-mlp-vs-svm/
 ## Base de Datos MongoDB
 
 ### Nombre: breast_cancer_db
+
 ### Colección: patients_records
 
 #### Estructura de Documentos:
+
 ```json
 {
   "_id": ObjectId("..."),
@@ -295,7 +342,9 @@ breast-cancer-diagnosis-mlp-vs-svm/
 ## Solución de Problemas
 
 ### Error: "No se puede conectar a MongoDB"
+
 **Solución:**
+
 1. Verificar que MongoDB está instalado
 2. Verificar que el servicio está ejecutándose:
    ```powershell
@@ -307,7 +356,9 @@ breast-cancer-diagnosis-mlp-vs-svm/
    ```
 
 ### Error: "Módulo no encontrado"
+
 **Solución:**
+
 1. Verificar que el entorno virtual está activado (debe ver `(venv)` en el prompt)
 2. Reinstalar dependencias:
    ```powershell
@@ -315,8 +366,10 @@ breast-cancer-diagnosis-mlp-vs-svm/
    ```
 
 ### Error al activar el entorno virtual
+
 **Solución:**
 Si PowerShell bloquea la ejecución de scripts:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -326,6 +379,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ## Siguiente Fase: Semana 2
 
 Una vez completada la configuración, estarás listo para:
+
 1. Análisis Exploratorio de Datos (EDA)
 2. Visualizaciones con matplotlib/seaborn
 3. Preprocesamiento de datos
@@ -357,6 +411,6 @@ streamlit run app.py
 
 ---
 
-**Fecha de última actualización:** 9 de diciembre de 2025  
-**Autores:** Ignacio Ramírez, Cristián Vergara, Antonia Montecinos  
+**Fecha de última actualización:** 10 de diciembre de 2025
+**Autores:** Ignacio Ramírez, Cristián Vergara, Antonia Montecinos
 **Proyecto:** Breast Cancer Diagnosis - MLP vs SVM
