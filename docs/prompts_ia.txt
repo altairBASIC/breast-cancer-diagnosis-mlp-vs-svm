@@ -1,3 +1,9 @@
+DECLARACIÓN DE USO DE IA
+Este documento fue elaborado con apoyo de herramientas de Inteligencia
+Artificial (IA) para reconstruir, de forma aproximada y verosímil, los
+posibles prompts utilizados durante el desarrollo del proyecto. Las
+personas autoras revisaron y validaron el contenido final.
+
 Este archivo contiene ejemplos aproximados de prompts de IA
 que podrían haberse utilizado durante el desarrollo de este proyecto,
 especialmente para la aplicación Streamlit y la documentación.
